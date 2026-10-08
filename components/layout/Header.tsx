@@ -38,11 +38,11 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-line/85 bg-background/90 backdrop-blur-[18px]">
-      <Container className="flex h-[76px] items-center justify-between gap-6">
+      <Container className="flex h-[76px] items-center justify-between gap-6 max-sm:h-[64px] max-sm:gap-4">
         <a
           href={homeHref("#inicio")}
           aria-label="Evosistencia inicio"
-          className="flex min-w-[184px] items-center"
+          className="flex min-w-[184px] items-center max-sm:min-w-0"
           onClick={closeMenu}
         >
           <Image
@@ -51,7 +51,7 @@ export function Header() {
             width={190}
             height={52}
             priority
-            className="h-[52px] w-[190px] object-contain object-left"
+            className="h-[52px] w-[190px] object-contain object-left max-sm:h-[40px] max-sm:w-auto"
           />
         </a>
 
@@ -83,7 +83,7 @@ export function Header() {
           })}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="hidden items-center gap-3 lg:flex">
           <Button
             href="/dashboard"
             variant="secondary"
@@ -107,7 +107,7 @@ export function Header() {
           onClick={() => setOpen((value) => !value)}
           aria-label={open ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={open}
-          className="text-ink lg:hidden"
+          className="text-ink lg:hidden max-lg:-m-2 max-lg:p-2"
         >
           {open ? (
             <CloseIcon className="size-7" />
@@ -120,14 +120,14 @@ export function Header() {
       {open ? (
         <nav
           aria-label="Menú de navegación"
-          className="absolute inset-x-5 top-[82px] flex flex-col items-start gap-4 rounded-[22px] border border-line bg-surface p-[22px] shadow-[var(--shadow)] lg:hidden"
+          className="absolute inset-x-5 top-[82px] flex max-h-[calc(100dvh-96px)] flex-col items-start gap-4 overflow-y-auto rounded-[22px] border border-line bg-surface p-[22px] shadow-[var(--shadow)] lg:hidden max-sm:top-[70px] max-sm:p-[18px]"
         >
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={homeHref(link.href)}
               onClick={closeMenu}
-              className="text-base font-semibold text-muted transition-colors hover:text-ink"
+              className="flex min-h-[40px] w-full items-center text-base font-semibold text-muted transition-colors hover:text-ink"
             >
               {link.label}
             </a>

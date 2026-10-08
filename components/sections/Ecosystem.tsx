@@ -24,7 +24,7 @@ export function Ecosystem() {
               delay={index * 70}
               className="relative h-full"
             >
-              <article className="flex h-full min-h-[260px] flex-col rounded-[24px] border border-line bg-surface p-7 shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1.5 hover:shadow-[var(--shadow)]">
+              <article className="flex h-full min-h-[260px] flex-col rounded-[24px] border border-line bg-surface p-7 shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1.5 hover:shadow-[var(--shadow)] max-sm:min-h-0 max-sm:p-5">
                 <div className="mb-4 flex h-[92px] items-center justify-center">
                   <Image
                     src={item.logo}

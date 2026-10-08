@@ -16,11 +16,11 @@ export function Hero() {
         aria-hidden="true"
         className="pointer-events-none absolute top-[-20%] right-[-10%] left-[45%] h-[680px] bg-[radial-gradient(circle_at_center,rgb(91_34_232_/_0.18),transparent_62%)]"
       />
-      <div className="text-center">
+      <div className="px-5 text-center lg:px-0">
         <Eyebrow>{hero.eyebrow}</Eyebrow>
       </div>
 
-      <Container className="relative grid items-center gap-[58px] lg:grid-cols-[1.06fr_0.94fr]">
+      <Container className="relative grid items-center gap-[38px] lg:grid-cols-[1.06fr_0.94fr] lg:gap-[58px]">
         <Reveal>
 
           <h1 className="mt-[18px] max-w-[850px] text-[clamp(2.35rem,5vw,4.95rem)] leading-[1.04] font-bold tracking-[-0.045em]">
@@ -31,14 +31,23 @@ export function Hero() {
             {hero.description}
           </p>
 
-          <div className="mt-8 flex flex-wrap gap-3.5">
-            <Button href={hero.primaryCta.href}>{hero.primaryCta.label}</Button>
-            <Button href={hero.secondaryCta.href} variant="secondary">
+          <div className="mt-8 flex flex-wrap gap-3.5 max-sm:flex-col max-sm:gap-3">
+            <Button
+              href={hero.primaryCta.href}
+              className="max-sm:w-full"
+            >
+              {hero.primaryCta.label}
+            </Button>
+            <Button
+              href={hero.secondaryCta.href}
+              variant="secondary"
+              className="max-sm:w-full"
+            >
               {hero.secondaryCta.label}
             </Button>
           </div>
 
-          <div className="mt-[42px] grid gap-3.5 lg:grid-cols-3">
+          <div className="mt-[42px] grid gap-3.5 max-sm:mt-8 lg:grid-cols-3">
             {hero.highlights.map(({ icon, title, text }) => {
               const Icon = iconMap[icon];
               return (

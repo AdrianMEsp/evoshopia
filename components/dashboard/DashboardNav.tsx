@@ -10,9 +10,9 @@ export function DashboardNav() {
   const [active, setActive] = useState(dashboardNav[0].label);
 
   return (
-    <aside className="self-start rounded-[22px] border border-line bg-surface p-4 shadow-[var(--shadow-soft)] lg:sticky lg:top-[96px]">
-      <div className="flex items-center gap-3 rounded-[16px] bg-surface-2 p-3">
-        <span className="brand-gradient grid size-11 shrink-0 place-items-center rounded-full text-[0.9rem] font-bold text-white">
+    <aside className="grid gap-3 self-start rounded-[22px] border border-line bg-surface p-4 shadow-[var(--shadow-soft)] max-sm:p-3 sm:grid-cols-[minmax(0,1fr)_auto] lg:flex lg:flex-col lg:gap-0 lg:sticky lg:top-[96px]">
+      <div className="flex items-center gap-3 rounded-[16px] bg-surface-2 p-3 max-sm:p-2.5 sm:col-start-1 sm:row-start-1 sm:min-w-0">
+        <span className="brand-gradient grid size-11 shrink-0 place-items-center rounded-full text-[0.9rem] font-bold text-white max-sm:size-9 max-sm:text-[0.8rem]">
           {dashboardUser.initials}
         </span>
         <div className="min-w-0">
@@ -27,7 +27,7 @@ export function DashboardNav() {
 
       <nav
         aria-label="Navegación del dashboard"
-        className="mt-4 flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:gap-1.5 lg:overflow-visible lg:pb-0"
+        className="flex gap-2 overflow-x-auto pb-2.5 max-sm:snap-x max-sm:snap-proximity sm:col-span-2 sm:row-start-2 sm:flex-wrap sm:overflow-visible sm:pb-0 lg:mt-4 lg:flex-col lg:gap-1.5 [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#c9d1dc]"
       >
         {dashboardNav.map((item) => {
           const Icon = iconMap[item.icon];
@@ -39,7 +39,7 @@ export function DashboardNav() {
               onClick={() => setActive(item.label)}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "flex shrink-0 items-center gap-2.5 rounded-full px-4 py-2.5 text-[0.9rem] font-semibold transition lg:w-full lg:rounded-[14px]",
+                "flex shrink-0 snap-start items-center gap-2.5 rounded-full px-4 py-2.5 text-[0.9rem] font-semibold transition max-sm:px-3.5 max-sm:py-2 lg:w-full lg:rounded-[14px]",
                 isActive
                   ? "brand-gradient text-white shadow-[0_10px_24px_rgb(91_34_232_/_0.22)]"
                   : "text-muted hover:bg-surface-2 hover:text-ink",
@@ -64,7 +64,7 @@ export function DashboardNav() {
 
       <Link
         href="/"
-        className="mt-4 flex items-center justify-center gap-2 rounded-full border border-line bg-surface px-4 py-2.5 text-[0.86rem] font-bold text-muted transition hover:-translate-y-0.5 hover:border-brand/40 hover:text-ink"
+        className="flex items-center justify-center gap-2 rounded-full border border-line bg-surface px-4 py-2.5 text-[0.86rem] font-bold text-muted transition hover:-translate-y-0.5 hover:border-brand/40 hover:text-ink max-sm:py-2 max-sm:text-[0.82rem] sm:col-start-2 sm:row-start-1 lg:mt-4 lg:w-full"
       >
         Volver al sitio
       </Link>

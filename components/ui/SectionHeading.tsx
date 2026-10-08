@@ -16,7 +16,12 @@ export function SectionHeading({
   className,
 }: SectionHeadingProps) {
   return (
-    <div className={cn("mx-auto mb-[42px] max-w-[760px] text-center", className)}>
+    <div
+      className={cn(
+        "mx-auto mb-[42px] max-w-[760px] text-center max-sm:mb-8",
+        className,
+      )}
+    >
       <Reveal>
         <Eyebrow>{eyebrow}</Eyebrow>
         <h2 className="mt-3 text-[clamp(2rem,3vw,3.1rem)] leading-[1.04] font-bold tracking-[-0.045em]">

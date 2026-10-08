@@ -14,7 +14,7 @@ export function SuccessCases() {
         />
 
         <Reveal>
-          <div className="rounded-[26px] border border-dashed border-brand/40 bg-brand/5 p-[34px] text-center">
+          <div className="rounded-[26px] border border-dashed border-brand/40 bg-brand/5 p-[34px] text-center max-sm:p-6">
             <strong className="font-bold">{successCases.highlight}</strong>{" "}
             {successCases.text}
           </div>

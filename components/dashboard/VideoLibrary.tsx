@@ -30,7 +30,7 @@ export function VideoLibrary() {
       <div
         role="tablist"
         aria-label="Filtrar videos por categoría"
-        className="mb-5 flex flex-wrap gap-2"
+        className="mb-5 flex flex-wrap gap-2 max-sm:mb-4 max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:pb-2.5 max-sm:snap-x max-sm:snap-proximity max-sm:[scrollbar-width:thin] max-sm:[&::-webkit-scrollbar]:h-1.5 max-sm:[&::-webkit-scrollbar]:bg-transparent max-sm:[&::-webkit-scrollbar-thumb]:rounded-full max-sm:[&::-webkit-scrollbar-thumb]:bg-[#c9d1dc]"
       >
         {categories.map((item) => {
           const isActive = item === category;
@@ -42,7 +42,7 @@ export function VideoLibrary() {
               aria-selected={isActive}
               onClick={() => setCategory(item)}
               className={cn(
-                "rounded-full border px-4 py-2 text-[0.84rem] font-bold transition",
+                "shrink-0 snap-start rounded-full border px-4 py-2 text-[0.84rem] font-bold transition",
                 isActive
                   ? "border-transparent brand-gradient text-white shadow-[0_10px_24px_rgb(91_34_232_/_0.2)]"
                   : "border-line bg-surface text-muted hover:-translate-y-0.5 hover:border-brand/40 hover:text-ink",
@@ -76,18 +76,18 @@ export function VideoLibrary() {
                 aria-label={`Reproducir ${video.title}`}
                 className="absolute inset-0 grid place-items-center"
               >
-                <span className="grid size-14 place-items-center rounded-full bg-white/92 text-brand shadow-[0_12px_28px_rgb(6_20_46_/_0.28)] transition duration-200 group-hover:scale-110">
-                  <PlayIcon className="size-6 translate-x-0.5" />
+                <span className="grid size-14 place-items-center rounded-full bg-white/92 text-brand shadow-[0_12px_28px_rgb(6_20_46_/_0.28)] transition duration-200 group-hover:scale-110 max-sm:size-12">
+                  <PlayIcon className="size-6 translate-x-0.5 max-sm:size-5" />
                 </span>
               </button>
             </div>
 
-            <div className="p-[18px]">
+            <div className="p-[18px] max-sm:p-4">
               <h4 className="text-[1.02rem] leading-tight font-bold tracking-[-0.03em]">
                 {video.title}
               </h4>
               <p className="mt-2 text-[0.88rem] text-muted">{video.text}</p>
-              <div className="mt-3.5 flex items-center justify-between gap-3 border-t border-line pt-3 text-[0.78rem] text-muted">
+              <div className="mt-3.5 flex items-center justify-between gap-3 border-t border-line pt-3 text-[0.78rem] text-muted max-sm:gap-2">
                 <span className="font-semibold text-ink">{video.author}</span>
                 <span>{video.views}</span>
               </div>
