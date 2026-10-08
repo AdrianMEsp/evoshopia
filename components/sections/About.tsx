@@ -20,7 +20,7 @@ export function About() {
             {about.description}
           </p>
 
-          <ul className="my-[22px] grid gap-2.5">
+          <ul className="my-[22px]  grid gap-2.5">
             {about.bullets.map((bullet) => (
               <li key={bullet} className="flex gap-2.5">
                 <span className="brand-gradient grid size-6 shrink-0 place-items-center rounded-full text-white">
