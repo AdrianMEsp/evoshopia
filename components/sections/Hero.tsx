@@ -16,10 +16,12 @@ export function Hero() {
         aria-hidden="true"
         className="pointer-events-none absolute top-[-20%] right-[-10%] left-[45%] h-[680px] bg-[radial-gradient(circle_at_center,rgb(91_34_232_/_0.18),transparent_62%)]"
       />
+      <div className="text-center">
+        <Eyebrow>{hero.eyebrow}</Eyebrow>
+      </div>
 
       <Container className="relative grid items-center gap-[58px] lg:grid-cols-[1.06fr_0.94fr]">
         <Reveal>
-          <Eyebrow>{hero.eyebrow}</Eyebrow>
 
           <h1 className="mt-[18px] max-w-[850px] text-[clamp(2.35rem,5vw,4.95rem)] leading-[1.04] font-bold tracking-[-0.045em]">
             {hero.title}

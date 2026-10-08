@@ -9,7 +9,6 @@ import {
   dashboardCourses,
   dashboardGreeting,
   dashboardNotice,
-  dashboardStats,
 } from "@/content/dashboard";
 import { site } from "@/content/site";
 
