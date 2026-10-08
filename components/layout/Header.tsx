@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { MenuIcon, CloseIcon } from "@/components/icons";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
@@ -11,6 +12,9 @@ import { cn } from "@/lib/cn";
 export function Header() {
   const [open, setOpen] = useState(false);
   const [activeHref, setActiveHref] = useState<string | null>(null);
+  const pathname = usePathname();
+  const onHome = pathname === "/";
+  const homeHref = (href: string) => (onHome ? href : `/${href}`);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -36,7 +40,7 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-line/85 bg-background/90 backdrop-blur-[18px]">
       <Container className="flex h-[76px] items-center justify-between gap-6">
         <a
-          href="#inicio"
+          href={homeHref("#inicio")}
           aria-label="Evosistencia inicio"
           className="flex min-w-[184px] items-center"
           onClick={closeMenu}
@@ -60,7 +64,7 @@ export function Header() {
             return (
               <a
                 key={link.href}
-                href={link.href}
+                href={homeHref(link.href)}
                 onClick={closeMenu}
                 className={cn(
                   "relative transition-colors duration-200 hover:text-ink",
@@ -79,13 +83,24 @@ export function Header() {
           })}
         </nav>
 
-        <Button
-          href="#contacto"
-          onClick={closeMenu}
-          className="hidden lg:inline-flex"
-        >
-          Agendar reunión
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button
+            href="/dashboard"
+            variant="secondary"
+            onClick={closeMenu}
+            className="hidden text-brand lg:inline-flex"
+          >
+            Iniciar sesión
+          </Button>
+
+          <Button
+            href={homeHref("#contacto")}
+            onClick={closeMenu}
+            className="hidden lg:inline-flex"
+          >
+            Agendar reunión
+          </Button>
+        </div>
 
         <button
           type="button"
@@ -110,14 +125,17 @@ export function Header() {
           {navLinks.map((link) => (
             <a
               key={link.href}
-              href={link.href}
+              href={homeHref(link.href)}
               onClick={closeMenu}
               className="text-base font-semibold text-muted transition-colors hover:text-ink"
             >
               {link.label}
             </a>
           ))}
-          <Button href="#contacto" onClick={closeMenu} className="w-full">
+          <Button href="/dashboard" variant="secondary" onClick={closeMenu} className="w-full text-brand">
+            Iniciar sesión
+          </Button>
+          <Button href={homeHref("#contacto")} onClick={closeMenu} className="w-full">
             Agendar reunión
           </Button>
         </nav>

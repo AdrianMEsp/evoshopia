@@ -32,7 +32,7 @@ export function Ecosystem() {
                     width={82}
                     height={82}
                     loading="lazy"
-                    className="h-[82px] w-auto max-w-[180px] object-contain"
+                    className="h-[82px] h-[82px] max-w-[180px] object-contain"
                   />
                 </div>
                 <h3 className="text-center text-[1.35rem] leading-none font-bold tracking-[-0.045em]">
