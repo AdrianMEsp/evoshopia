@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { navLinks } from "@/content/site";
 import { cn } from "@/lib/cn";
+import Logo from "@/public/images/brand/evosistencia.png"
 
 export function Header() {
   const [open, setOpen] = useState(false);
@@ -46,7 +47,7 @@ export function Header() {
           onClick={closeMenu}
         >
           <Image
-            src="/images/brand/evosistencia.png"
+            src={Logo}
             alt="Evosistencia"
             width={190}
             height={52}

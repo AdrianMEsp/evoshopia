@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { footer } from "@/content/site";
+import Logo from "@/public/images/brand/evosistencia.png"
 
 export function Footer() {
   return (
@@ -9,7 +10,7 @@ export function Footer() {
         <div className="grid gap-[34px] md:grid-cols-2 lg:grid-cols-[1.3fr_repeat(3,1fr)] max-sm:grid-cols-2 max-sm:gap-x-6 max-sm:gap-y-7">
           <div className="max-sm:col-span-2">
             <Image
-              src="/images/brand/evosistencia.png"
+              src={Logo}
               alt="Evosistencia"
               width={210}
               height={62}
