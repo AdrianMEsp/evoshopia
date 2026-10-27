@@ -22,7 +22,7 @@ export function About() {
 
           <ul className="my-[22px]  grid gap-2.5">
             {about.bullets.map((bullet) => (
-              <li key={bullet} className="flex gap-2.5">
+              <li key={bullet} className="flex gap-2.5 max-sm:text-left">
                 <span className="brand-gradient grid size-6 shrink-0 place-items-center rounded-full text-white">
                   <CheckIcon className="size-3.5" />
                 </span>
@@ -31,7 +31,11 @@ export function About() {
             ))}
           </ul>
 
-          <Button href={about.cta.href} variant="secondary">
+          <Button
+            href={about.cta.href}
+            variant="secondary"
+            className="max-sm:w-full"
+          >
             {about.cta.label}
           </Button>
         </Reveal>
