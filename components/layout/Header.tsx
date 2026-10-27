@@ -10,6 +10,42 @@ import { navLinks } from "@/content/site";
 import { cn } from "@/lib/cn";
 import Logo from "@/public/images/brand/evosistencia.png"
 
+interface HeaderActionsProps {
+  onClick: () => void;
+  mobile?: boolean;
+}
+
+function HeaderActions({ onClick, mobile = false }: HeaderActionsProps) {
+  return (
+    <div
+      className={cn(
+        "flex items-center",
+        mobile
+          ? "w-full flex-col gap-4"
+          : "hidden shrink-0 gap-4 lg:flex",
+      )}
+    >
+      <button
+        type="button"
+        onClick={onClick}
+        className={cn(
+          "inline-flex h-10 items-center justify-center rounded-full border border-line bg-surface px-[18px] py-0 text-sm font-bold shadow-[var(--shadow-soft)] transition duration-200 ease-out hover:-translate-y-0.5 hover:border-brand/40",
+          mobile && "w-full",
+        )}
+      >
+        Iniciar sesión
+      </button>
+      <Button
+        href="#contacto"
+        onClick={onClick}
+        className={cn("h-10 px-[18px] py-0 text-sm", mobile && "w-full")}
+      >
+        Agendar reunión
+      </Button>
+    </div>
+  );
+}
+
 export function Header() {
   const [open, setOpen] = useState(false);
   const [activeHref, setActiveHref] = useState<string | null>(null);
@@ -58,7 +94,7 @@ export function Header() {
 
         <nav
           aria-label="Menú principal"
-          className="hidden items-center gap-[26px] text-[0.92rem] font-semibold text-muted lg:flex"
+          className="hidden flex-1 items-center justify-center gap-[clamp(14px,1.3vw,26px)] text-[0.92rem] font-semibold text-muted lg:flex"
         >
           {navLinks.map((link) => {
             const isActive = activeHref === link.href;
