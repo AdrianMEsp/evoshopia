@@ -31,7 +31,7 @@ export function AiSolutions() {
               {items.map((item) => (
                 <article
                   key={item.name}
-                  className="rounded-[22px] border border-white/15 bg-white/10 p-6"
+                  className="rounded-[22px] border border-white/15 bg-white/10 p-6 max-sm:p-5"
                 >
                   <Image
                     src={item.logo}

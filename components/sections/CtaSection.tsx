@@ -15,7 +15,11 @@ export function CtaSection() {
             <p className="mt-2.5 text-[1.05rem] text-white/85">{cta.text}</p>
           </div>
 
-          <Button href={cta.button.href} variant="light" className="shrink-0">
+          <Button
+            href={cta.button.href}
+            variant="light"
+            className="shrink-0 max-sm:w-full"
+          >
             {cta.button.label}
           </Button>
         </Reveal>
