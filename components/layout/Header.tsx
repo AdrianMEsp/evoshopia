@@ -122,7 +122,7 @@ export function Header() {
 
         <div className="hidden items-center gap-3 lg:flex">
           <Button
-            href="/dashboard"
+            href="/login"
             variant="secondary"
             onClick={closeMenu}
             className="hidden text-brand lg:inline-flex"
@@ -169,7 +169,7 @@ export function Header() {
               {link.label}
             </a>
           ))}
-          <Button href="/dashboard" variant="secondary" onClick={closeMenu} className="w-full text-brand">
+          <Button href="/login" variant="secondary" onClick={closeMenu} className="w-full text-brand">
             Iniciar sesión
           </Button>
           <Button href={homeHref("#contacto")} onClick={closeMenu} className="w-full">
