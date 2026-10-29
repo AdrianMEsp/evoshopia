@@ -201,6 +201,23 @@ export function CloseIcon(props: IconProps): ReactElement {
   );
 }
 
+export function PlayIcon(props: IconProps): ReactElement {
+  return (
+    <Glyph {...props}>
+      <path d="M9 5.8 18.2 12 9 18.2V5.8Z" />
+    </Glyph>
+  );
+}
+
+export function ClockIcon(props: IconProps): ReactElement {
+  return (
+    <Glyph {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7.2V12l3.2 2" />
+    </Glyph>
+  );
+}
+
 export function MailIcon(props: IconProps): ReactElement {
   return (
     <Glyph {...props}>
@@ -240,6 +257,8 @@ export const iconMap = {
   "arrow-down": ArrowDownIcon,
   menu: MenuIcon,
   close: CloseIcon,
+  play: PlayIcon,
+  clock: ClockIcon,
   mail: MailIcon,
   "map-pin": MapPinIcon,
 } satisfies Record<string, (props: IconProps) => ReactElement>;

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { cn } from "@/lib/cn";
 
 type Variant = "primary" | "secondary" | "light";
@@ -32,13 +33,18 @@ export function Button({
   ariaLabel,
   onClick,
 }: ButtonProps) {
+  const classes = cn(baseClasses, variantClasses[variant], className);
+
+  if (href.startsWith("/") && !href.startsWith("//")) {
+    return (
+      <Link href={href} aria-label={ariaLabel} onClick={onClick} className={classes}>
+        {children}
+      </Link>
+    );
+  }
+
   return (
-    <a
-      href={href}
-      aria-label={ariaLabel}
-      onClick={onClick}
-      className={cn(baseClasses, variantClasses[variant], className)}
-    >
+    <a href={href} aria-label={ariaLabel} onClick={onClick} className={classes}>
       {children}
     </a>
   );

@@ -18,7 +18,6 @@ export function Hero() {
         aria-hidden="true"
         className="pointer-events-none absolute top-[-18%] right-[-8%] left-[35%] h-[560px] bg-[radial-gradient(circle_at_center,rgb(91_34_232_/_0.1),transparent_65%)]"
       />
-
       <Container className="relative">
         <Reveal className="text-center">
           <div className="flex justify-center">
@@ -38,10 +37,10 @@ export function Hero() {
             {hero.description}
           </p>
 
-          <div className="mt-6 flex flex-wrap justify-center gap-14">
+          <div className="mt-6 flex flex-wrap justify-center gap-x-14 gap-y-3 max-sm:flex-col max-sm:items-stretch">
             <Button
               href={hero.primaryCta.href}
-              className="gap-3 px-6 py-[9px] text-[0.9rem] shadow-none"
+              className="gap-3 px-6 py-[9px] text-[0.9rem] shadow-none max-sm:w-full"
             >
               {hero.primaryCta.label}
               <ArrowRightIcon className="size-4" />
@@ -49,7 +48,7 @@ export function Hero() {
             <Button
               href={hero.secondaryCta.href}
               variant="secondary"
-              className="gap-3 border-[#384263] px-6 py-[9px] text-[0.9rem] shadow-none"
+              className="gap-3 border-[#384263] px-6 py-[9px] text-[0.9rem] shadow-none max-sm:w-full"
             >
               {hero.secondaryCta.label}
               <ArrowRightIcon className="size-4" />
@@ -78,19 +77,19 @@ export function Hero() {
                 ][index];
 
                 return (
-                <li
-                  key={credential}
-                  className="flex items-center gap-2 text-[0.79rem] text-[#475467]"
-                >
-                  <span className="grid size-5 shrink-0 place-items-center rounded-full bg-[#f1e8ff] text-brand">
-                    {CredentialIcon ? (
-                      <CredentialIcon className="size-3" />
-                    ) : (
-                      <CheckIcon className="size-3" />
-                    )}
-                  </span>
-                  <span>{credential}</span>
-                </li>
+                  <li
+                    key={credential}
+                    className="flex items-center gap-2 text-[0.79rem] text-[#475467]"
+                  >
+                    <span className="grid size-5 shrink-0 place-items-center rounded-full bg-[#f1e8ff] text-brand">
+                      {CredentialIcon ? (
+                        <CredentialIcon className="size-3" />
+                      ) : (
+                        <CheckIcon className="size-3" />
+                      )}
+                    </span>
+                    <span>{credential}</span>
+                  </li>
                 );
               })}
             </ul>
