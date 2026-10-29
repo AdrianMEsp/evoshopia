@@ -4,12 +4,13 @@ import { cn } from "@/lib/cn";
 interface EyebrowProps {
   children: ReactNode;
   className?: string;
-  tone?: "brand" | "light";
+  tone?: "brand" | "light" | "neutral";
 }
 
-const toneClasses: Record<"brand" | "light", string> = {
+const toneClasses: Record<"brand" | "light" | "neutral", string> = {
   brand: "border-brand/35 bg-surface/80 text-brand",
   light: "border-white/25 bg-white/10 text-white",
+  neutral: "border-transparent bg-[#f1f1f3] text-[#5b5b63]",
 };
 
 export function Eyebrow({ children, className, tone = "brand" }: EyebrowProps) {
