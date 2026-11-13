@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { MenuIcon, CloseIcon } from "@/components/icons";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { SignOutDialog } from "@/components/auth/SignOutDialog";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { navLinks } from "@/content/site";
@@ -15,6 +16,8 @@ import Logo from "@/public/images/brand/evosistencia.png";
 export function Header() {
   const [open, setOpen] = useState(false);
   const [activeHref, setActiveHref] = useState<string | null>(null);
+  const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
+  const [signOutPending, setSignOutPending] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const { user, status, signOut } = useAuth();
@@ -44,10 +47,20 @@ export function Header() {
   const closeMenu = () => setOpen(false);
 
   const handleSignOut = async () => {
+    setSignOutPending(true);
+    try {
+      await signOut();
+      setSignOutDialogOpen(false);
+      router.push("/");
+      router.refresh();
+    } finally {
+      setSignOutPending(false);
+    }
+  };
+
+  const requestSignOut = () => {
     closeMenu();
-    await signOut();
-    router.push("/");
-    router.refresh();
+    setSignOutDialogOpen(true);
   };
 
   return (
@@ -110,7 +123,7 @@ export function Header() {
               </Button>
               <button
                 type="button"
-                onClick={handleSignOut}
+                onClick={requestSignOut}
                 className="inline-flex h-[46px] items-center 
                 justify-center rounded-full border border-line bg-surface 
                 px-[18px] text-sm font-bold text-muted shadow-[var(--shadow-soft)] hover:cursor-pointer
@@ -178,7 +191,7 @@ export function Header() {
               </Button>
               <button
                 type="button"
-                onClick={handleSignOut}
+                onClick={requestSignOut}
                 className="inline-flex w-full items-center justify-center rounded-full border border-line bg-surface px-5 py-[13px] text-base font-bold text-muted shadow-[var(--shadow-soft)] transition hover:cursor-pointer hover:border-brand/40 hover:text-ink"
               >
                 Cerrar sesión
@@ -195,6 +208,12 @@ export function Header() {
           </Button>
         </nav>
       ) : null}
+      <SignOutDialog
+        open={signOutDialogOpen}
+        pending={signOutPending}
+        onCancel={() => setSignOutDialogOpen(false)}
+        onConfirm={() => void handleSignOut()}
+      />
     </header>
   );
 }

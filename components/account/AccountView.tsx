@@ -8,6 +8,7 @@ import AuthAlert from "@/components/auth/AuthAlert";
 import AuthButton from "@/components/auth/AuthButton";
 import AuthInput from "@/components/auth/AuthInput";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { SignOutDialog } from "@/components/auth/SignOutDialog";
 import { getErrorMessage, resolveMediaUrl } from "@/lib/api";
 import {
   getUserDisplayName,
@@ -49,6 +50,8 @@ export function AccountView() {
   const [passwordPending, setPasswordPending] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordMessage, setPasswordMessage] = useState<string | null>(null);
+  const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
+  const [signOutPending, setSignOutPending] = useState(false);
 
   const displayName = getUserDisplayName(user);
   const initials = getUserInitials(user);
@@ -177,9 +180,15 @@ export function AccountView() {
   };
 
   const handleSignOut = async () => {
-    await signOut();
-    router.replace("/login");
-    router.refresh();
+    setSignOutPending(true);
+    try {
+      await signOut();
+      setSignOutDialogOpen(false);
+      router.replace("/login");
+      router.refresh();
+    } finally {
+      setSignOutPending(false);
+    }
   };
 
   return (
@@ -396,7 +405,7 @@ export function AccountView() {
 
             <button
               type="button"
-              onClick={handleSignOut}
+              onClick={() => setSignOutDialogOpen(true)}
               className="mt-5 inline-flex w-full items-center justify-center rounded-xl border border-red-200 bg-red-50 px-5 py-3 text-sm font-bold text-red-600 transition hover:cursor-pointer hover:bg-red-100"
             >
               Cerrar sesión
@@ -404,6 +413,12 @@ export function AccountView() {
           </section>
         </div>
       </div>
+      <SignOutDialog
+        open={signOutDialogOpen}
+        pending={signOutPending}
+        onCancel={() => setSignOutDialogOpen(false)}
+        onConfirm={() => void handleSignOut()}
+      />
     </div>
   );
 }
