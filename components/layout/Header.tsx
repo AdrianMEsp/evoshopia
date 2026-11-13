@@ -2,56 +2,24 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { MenuIcon, CloseIcon } from "@/components/icons";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { navLinks } from "@/content/site";
 import { cn } from "@/lib/cn";
-import Logo from "@/public/images/brand/evosistencia.png"
-
-interface HeaderActionsProps {
-  onClick: () => void;
-  mobile?: boolean;
-}
-
-function HeaderActions({ onClick, mobile = false }: HeaderActionsProps) {
-  return (
-    <div
-      className={cn(
-        "flex items-center",
-        mobile
-          ? "w-full flex-col gap-4"
-          : "hidden shrink-0 gap-4 lg:flex",
-      )}
-    >
-      <button
-        type="button"
-        onClick={onClick}
-        className={cn(
-          "inline-flex h-10 items-center justify-center rounded-full border border-line bg-surface px-[18px] py-0 text-sm font-bold shadow-[var(--shadow-soft)] transition duration-200 ease-out hover:-translate-y-0.5 hover:border-brand/40",
-          mobile && "w-full",
-        )}
-      >
-        Iniciar sesión
-      </button>
-      <Button
-        href="#contacto"
-        onClick={onClick}
-        className={cn("h-10 px-[18px] py-0 text-sm", mobile && "w-full")}
-      >
-        Agendar reunión
-      </Button>
-    </div>
-  );
-}
+import Logo from "@/public/images/brand/evosistencia.png";
 
 export function Header() {
   const [open, setOpen] = useState(false);
   const [activeHref, setActiveHref] = useState<string | null>(null);
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, status, signOut } = useAuth();
   const onHome = pathname === "/";
   const homeHref = (href: string) => (onHome ? href : `/${href}`);
+  const isAuthenticated = status === "authenticated" && Boolean(user);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -72,6 +40,13 @@ export function Header() {
   }, []);
 
   const closeMenu = () => setOpen(false);
+
+  const handleSignOut = async () => {
+    closeMenu();
+    await signOut();
+    router.push("/");
+    router.refresh();
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-line/85 bg-background/90 backdrop-blur-[18px]">
@@ -121,14 +96,34 @@ export function Header() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <Button
-            href="/login"
-            variant="secondary"
-            onClick={closeMenu}
-            className="hidden text-brand lg:inline-flex"
-          >
-            Iniciar sesión
-          </Button>
+          {isAuthenticated ? (
+            <>
+              <Button
+                href="/account"
+                variant="secondary"
+                onClick={closeMenu}
+                className="hidden text-brand lg:inline-flex"
+              >
+                Mi cuenta
+              </Button>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="inline-flex h-[46px] items-center justify-center rounded-full border border-line bg-surface px-[18px] text-sm font-bold text-muted shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:text-ink"
+              >
+                Salir
+              </button>
+            </>
+          ) : (
+            <Button
+              href="/login"
+              variant="secondary"
+              onClick={closeMenu}
+              className="hidden text-brand lg:inline-flex"
+            >
+              Iniciar sesión
+            </Button>
+          )}
 
           <Button
             href={homeHref("#contacto")}
@@ -169,9 +164,26 @@ export function Header() {
               {link.label}
             </a>
           ))}
-          <Button href="/login" variant="secondary" onClick={closeMenu} className="w-full text-brand">
-            Iniciar sesión
-          </Button>
+
+          {isAuthenticated ? (
+            <>
+              <Button href="/account" variant="secondary" onClick={closeMenu} className="w-full text-brand">
+                Mi cuenta
+              </Button>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="inline-flex w-full items-center justify-center rounded-full border border-line bg-surface px-5 py-[13px] text-base font-bold text-muted shadow-[var(--shadow-soft)] transition hover:border-brand/40 hover:text-ink"
+              >
+                Cerrar sesión
+              </button>
+            </>
+          ) : (
+            <Button href="/login" variant="secondary" onClick={closeMenu} className="w-full text-brand">
+              Iniciar sesión
+            </Button>
+          )}
+
           <Button href={homeHref("#contacto")} onClick={closeMenu} className="w-full">
             Agendar reunión
           </Button>

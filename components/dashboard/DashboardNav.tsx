@@ -3,25 +3,33 @@
 import { useState } from "react";
 import Link from "next/link";
 import { iconMap } from "@/components/icons";
-import { dashboardNav, dashboardUser } from "@/content/dashboard";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { dashboardNav } from "@/content/dashboard";
 import { cn } from "@/lib/cn";
+import {
+  getUserDisplayName,
+  getUserInitials,
+  getUserRoleLabel,
+} from "@/lib/auth";
 
 export function DashboardNav() {
   const [active, setActive] = useState(dashboardNav[0].label);
+  const { user } = useAuth();
+  const displayName = getUserDisplayName(user);
+  const initials = getUserInitials(user);
+  const roleLabel = getUserRoleLabel(user);
 
   return (
     <aside className="grid gap-3 self-start rounded-[22px] border border-line bg-surface p-4 shadow-[var(--shadow-soft)] max-sm:p-3 sm:grid-cols-[minmax(0,1fr)_auto] lg:flex lg:flex-col lg:gap-0 lg:sticky lg:top-[96px]">
       <div className="flex items-center gap-3 rounded-[16px] bg-surface-2 p-3 max-sm:p-2.5 sm:col-start-1 sm:row-start-1 sm:min-w-0">
         <span className="brand-gradient grid size-11 shrink-0 place-items-center rounded-full text-[0.9rem] font-bold text-white max-sm:size-9 max-sm:text-[0.8rem]">
-          {dashboardUser.initials}
+          {initials}
         </span>
         <div className="min-w-0">
           <p className="truncate text-[0.95rem] leading-tight font-bold">
-            {dashboardUser.name}
+            {displayName}
           </p>
-          <p className="mt-1 truncate text-[0.76rem] text-muted">
-            {dashboardUser.role}
-          </p>
+          <p className="mt-1 truncate text-[0.76rem] text-muted">{roleLabel}</p>
         </div>
       </div>
 

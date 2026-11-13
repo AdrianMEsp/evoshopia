@@ -1,64 +1,79 @@
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+import AuthAlert from "@/components/auth/AuthAlert";
+import AuthButton from "@/components/auth/AuthButton";
 import AuthCard from "@/components/auth/AuthCard";
+import AuthInput from "@/components/auth/AuthInput";
 import AuthLayout from "@/components/auth/AuthLayout";
+import { forgotPassword } from "@/lib/auth";
+import { getErrorMessage } from "@/lib/api";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
 
-    // MÁS ADELANTE:
-    // await supabase.auth.resetPasswordForEmail(email)
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-    router.push("/check-email");
+    if (!email.trim()) {
+      setError("Ingresa tu correo electrónico.");
+      return;
+    }
+
+    setPending(true);
+    setError(null);
+
+    try {
+      await forgotPassword(email);
+      router.push(
+        `/check-email?email=${encodeURIComponent(email.trim().toLowerCase())}`,
+      );
+    } catch (submitError) {
+      setError(getErrorMessage(submitError));
+    } finally {
+      setPending(false);
+    }
   };
 
   return (
     <AuthLayout>
       <AuthCard>
-        <h1 className="mb-3 text-3xl font-bold">
-          Recuperar acceso
-        </h1>
-
-        <p className="mb-6 text-sm text-gray-500">
-          Ingresá tu correo electrónico para recibir las instrucciones.
+        <h1 className="mb-2 text-3xl font-bold">Recuperar acceso</h1>
+        <p className="mb-6 text-sm text-muted">
+          Ingresa tu correo electrónico y te enviaremos las instrucciones para
+          crear una nueva contraseña.
         </p>
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-4"
-        >
-          <input
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+          {error ? <AuthAlert>{error}</AuthAlert> : null}
+
+          <AuthInput
             type="email"
+            name="email"
             placeholder="Correo electrónico"
+            autoComplete="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
             required
-            className="
-              w-full
-              rounded-xl
-              border
-              p-3
-            "
           />
 
-          <button
-            type="submit"
-            className="
-              w-full
-              rounded-full
-              bg-gradient-to-r
-              from-violet-600
-              to-orange-400
-              py-3
-              text-white
-              font-medium
-            "
-          >
+          <AuthButton type="submit" loading={pending}>
             Enviar instrucciones
-          </button>
+          </AuthButton>
         </form>
+
+        <p className="mt-6 text-sm text-muted">
+          <Link href="/login" className="font-semibold text-brand hover:underline">
+            Volver al inicio de sesión
+          </Link>
+        </p>
       </AuthCard>
     </AuthLayout>
   );
