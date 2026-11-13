@@ -21,6 +21,8 @@ const errorTranslations: Record<string, string> = {
   "Invalid token": "El enlace o código no es válido.",
   "Missing authentication": "Debes iniciar sesión para continuar.",
   "Too many requests": "Demasiados intentos. Inténtalo más tarde.",
+  "Internal Server Error":
+    "Ocurrió un error en el servidor. Inténtalo nuevamente en unos minutos.",
 };
 
 export class ApiError extends Error {
