@@ -51,7 +51,8 @@ export function DashboardNav({ courseCount, lessonCount }: DashboardNavProps) {
   };
 
   return (
-    <aside className="grid gap-3 self-start rounded-[22px] border border-line bg-surface p-4 shadow-[var(--shadow-soft)] max-sm:p-3 sm:grid-cols-[minmax(0,1fr)_auto] lg:flex lg:flex-col lg:gap-0 lg:sticky lg:top-[96px]">
+    <div className="space-y-3 self-start lg:sticky lg:top-[96px]">
+      <aside className="grid gap-3 rounded-[22px] border border-line bg-surface p-4 shadow-[var(--shadow-soft)] max-sm:p-3 sm:grid-cols-[minmax(0,1fr)_auto] lg:flex lg:flex-col lg:gap-0">
       <div className="flex items-center gap-3 rounded-[16px] bg-surface-2 p-3 max-sm:p-2.5 sm:col-start-1 sm:row-start-1 sm:min-w-0">
         <span className="brand-gradient grid size-11 shrink-0 place-items-center rounded-full text-[0.9rem] font-bold text-white max-sm:size-9 max-sm:text-[0.8rem]">
           {initials}
@@ -107,6 +108,16 @@ export function DashboardNav({ courseCount, lessonCount }: DashboardNavProps) {
       >
         Volver al sitio
       </Link>
-    </aside>
+      </aside>
+
+      <div className="rounded-[22px] border border-line bg-surface p-4 shadow-[var(--shadow-soft)] max-sm:p-3">
+        <Link
+          href="/account"
+          className="flex items-center justify-center gap-2 rounded-full border border-line bg-surface px-4 py-2.5 text-[0.86rem] font-bold text-brand transition hover:-translate-y-0.5 hover:border-brand/40 max-sm:py-2 max-sm:text-[0.82rem]"
+        >
+          Mi cuenta
+        </Link>
+      </div>
+    </div>
   );
 }

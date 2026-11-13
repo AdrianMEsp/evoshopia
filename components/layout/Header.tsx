@@ -8,6 +8,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { navLinks } from "@/content/site";
+import { getUserDisplayName } from "@/lib/auth";
 import { cn } from "@/lib/cn";
 import Logo from "@/public/images/brand/evosistencia.png";
 
@@ -20,6 +21,7 @@ export function Header() {
   const onHome = pathname === "/";
   const homeHref = (href: string) => (onHome ? href : `/${href}`);
   const isAuthenticated = status === "authenticated" && Boolean(user);
+  const displayName = getUserDisplayName(user).split(" ")[0];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -99,12 +101,12 @@ export function Header() {
           {isAuthenticated ? (
             <>
               <Button
-                href="/account"
+                href="/dashboard"
                 variant="secondary"
                 onClick={closeMenu}
-                className="hidden text-brand lg:inline-flex"
+                className="hidden max-w-[190px] truncate text-brand lg:inline-flex"
               >
-                Mi cuenta
+                {displayName}
               </Button>
               <button
                 type="button"
@@ -171,8 +173,8 @@ export function Header() {
 
           {isAuthenticated ? (
             <>
-              <Button href="/account" variant="secondary" onClick={closeMenu} className="w-full text-brand">
-                Mi cuenta
+              <Button href="/dashboard" variant="secondary" onClick={closeMenu} className="w-full text-brand">
+                {displayName}
               </Button>
               <button
                 type="button"
