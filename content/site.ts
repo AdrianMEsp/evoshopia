@@ -49,13 +49,13 @@ export interface SolutionItem {
 }
 
 export const site = {
-  name: "Evosistencia",
-  title: "Evosistencia | Tecnología con Humanidad®",
+  name: "Evosophia",
+  title: "Evosophia | Tecnología con Humanidad®",
   description:
-    "Evosistencia transforma organizaciones fortaleciendo personas mediante inteligencia artificial, bienestar organizacional e innovación.",
+    "Evosophia transforma organizaciones fortaleciendo personas mediante inteligencia artificial, bienestar organizacional e innovación.",
   ogDescription:
     "Consultoría internacional en IA, bienestar, formación y transformación digital.",
-  url: "https://www.evosistencia.cl",
+  url: "https://www.evosophia.cl",
   themeColor: "#5b22e8",
   email: "contacto@evosistencia.cl",
   location: "Santiago, Chile",

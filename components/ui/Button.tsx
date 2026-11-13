@@ -14,7 +14,7 @@ interface ButtonProps {
 }
 
 const baseClasses =
-  "inline-flex items-center justify-center gap-2.5 rounded-full px-5 py-[13px] text-base font-bold transition duration-200 ease-out";
+  "inline-flex items-center justify-center gap-2.5 rounded-full px-5 py-[13px] text-base font-bold transition duration-200 ease-out hover:cursor-pointer";
 
 const variantClasses: Record<Variant, string> = {
   primary:
