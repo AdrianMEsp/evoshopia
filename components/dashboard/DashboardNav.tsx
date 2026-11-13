@@ -12,12 +12,43 @@ import {
   getUserRoleLabel,
 } from "@/lib/auth";
 
-export function DashboardNav() {
+interface DashboardNavProps {
+  courseCount: number;
+  lessonCount: number;
+}
+
+export function DashboardNav({ courseCount, lessonCount }: DashboardNavProps) {
   const [active, setActive] = useState(dashboardNav[0].label);
   const { user } = useAuth();
   const displayName = getUserDisplayName(user);
   const initials = getUserInitials(user);
   const roleLabel = getUserRoleLabel(user);
+
+  const items = dashboardNav.map((item) => ({
+    ...item,
+    count:
+      item.label === "Cursos"
+        ? courseCount
+        : item.label === "Lecciones"
+          ? lessonCount
+          : undefined,
+  }));
+
+  const handleNavigate = (label: string) => {
+    setActive(label);
+    const target =
+      label === "Cursos" ? "cursos" : label === "Lecciones" ? "lecciones" : null;
+
+    if (target) {
+      document.getElementById(target)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+      return;
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <aside className="grid gap-3 self-start rounded-[22px] border border-line bg-surface p-4 shadow-[var(--shadow-soft)] max-sm:p-3 sm:grid-cols-[minmax(0,1fr)_auto] lg:flex lg:flex-col lg:gap-0 lg:sticky lg:top-[96px]">
@@ -37,17 +68,17 @@ export function DashboardNav() {
         aria-label="Navegación del dashboard"
         className="flex gap-2 overflow-x-auto pb-2.5 max-sm:snap-x max-sm:snap-proximity sm:col-span-2 sm:row-start-2 sm:flex-wrap sm:overflow-visible sm:pb-0 lg:mt-4 lg:flex-col lg:gap-1.5 [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#c9d1dc]"
       >
-        {dashboardNav.map((item) => {
+        {items.map((item) => {
           const Icon = iconMap[item.icon];
           const isActive = active === item.label;
           return (
             <button
               key={item.label}
               type="button"
-              onClick={() => setActive(item.label)}
+              onClick={() => handleNavigate(item.label)}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "flex shrink-0 snap-start items-center gap-2.5 rounded-full px-4 py-2.5 text-[0.9rem] font-semibold transition max-sm:px-3.5 max-sm:py-2 lg:w-full lg:rounded-[14px]",
+                "flex shrink-0 snap-start items-center gap-2.5 hover:cursor-pointer rounded-full px-4 py-2.5 text-[0.9rem] font-semibold transition max-sm:px-3.5 max-sm:py-2 lg:w-full lg:rounded-[14px]",
                 isActive
                   ? "brand-gradient text-white shadow-[0_10px_24px_rgb(91_34_232_/_0.22)]"
                   : "text-muted hover:bg-surface-2 hover:text-ink",

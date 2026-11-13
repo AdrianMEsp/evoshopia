@@ -262,7 +262,7 @@ export function AccountView() {
                 type="button"
                 onClick={handleAvatarRemove}
                 disabled={avatarPending}
-                className="rounded-full border border-line bg-surface px-4 py-2 text-sm font-bold text-muted transition hover:border-red-200 hover:text-red-600 disabled:opacity-60"
+                className="rounded-full border border-line bg-surface px-4 py-2 text-sm font-bold text-muted transition hover:cursor-pointer hover:border-red-200 hover:text-red-600 disabled:opacity-60"
               >
                 Quitar foto
               </button>
@@ -397,7 +397,7 @@ export function AccountView() {
             <button
               type="button"
               onClick={handleSignOut}
-              className="mt-5 inline-flex w-full items-center justify-center rounded-xl border border-red-200 bg-red-50 px-5 py-3 text-sm font-bold text-red-600 transition hover:bg-red-100"
+              className="mt-5 inline-flex w-full items-center justify-center rounded-xl border border-red-200 bg-red-50 px-5 py-3 text-sm font-bold text-red-600 transition hover:cursor-pointer hover:bg-red-100"
             >
               Cerrar sesión
             </button>

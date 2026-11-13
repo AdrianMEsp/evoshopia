@@ -109,7 +109,11 @@ export function Header() {
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="inline-flex h-[46px] items-center justify-center rounded-full border border-line bg-surface px-[18px] text-sm font-bold text-muted shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:text-ink"
+                className="inline-flex h-[46px] items-center 
+                justify-center rounded-full border border-line bg-surface 
+                px-[18px] text-sm font-bold text-muted shadow-[var(--shadow-soft)] hover:cursor-pointer
+                transition duration-200 hover:-translate-y-0.5 hover:border-red-600
+                  text-red-700"
               >
                 Salir
               </button>
@@ -139,7 +143,7 @@ export function Header() {
           onClick={() => setOpen((value) => !value)}
           aria-label={open ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={open}
-          className="text-ink lg:hidden max-lg:-m-2 max-lg:p-2"
+          className="text-ink lg:hidden max-lg:-m-2 max-lg:p-2 hover:cursor-pointer"
         >
           {open ? (
             <CloseIcon className="size-7" />
@@ -173,7 +177,7 @@ export function Header() {
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="inline-flex w-full items-center justify-center rounded-full border border-line bg-surface px-5 py-[13px] text-base font-bold text-muted shadow-[var(--shadow-soft)] transition hover:border-brand/40 hover:text-ink"
+                className="inline-flex w-full items-center justify-center rounded-full border border-line bg-surface px-5 py-[13px] text-base font-bold text-muted shadow-[var(--shadow-soft)] transition hover:cursor-pointer hover:border-brand/40 hover:text-ink"
               >
                 Cerrar sesión
               </button>
