@@ -1,6 +1,5 @@
 import { About } from "@/components/sections/About";
 import { AiSolutions } from "@/components/sections/AiSolutions";
-import { Blog } from "@/components/sections/Blog";
 import { CtaSection } from "@/components/sections/CtaSection";
 import { Ecosystem } from "@/components/sections/Ecosystem";
 import { Hero } from "@/components/sections/Hero";
@@ -20,7 +19,6 @@ export default function HomePage() {
       <WhyEvosistencia />
       <About />
       <SuccessCases />
-      <Blog />
       <CtaSection />
     </>
   );
