@@ -36,11 +36,6 @@ export interface ReasonItem {
   text: string;
 }
 
-export interface PostItem {
-  title: string;
-  text: string;
-}
-
 export interface SolutionItem {
   name: string;
   text: string;
@@ -91,8 +86,9 @@ export const navLinks: NavLink[] = [
   { label: "Ecosistema", href: "#ecosistema" },
   { label: "Servicios", href: "#servicios" },
   { label: "Talleres", href: "#programas" },
+  { label: "Cursos", href: "/courses" },
   { label: "Empresas", href: "#nosotros" },
-  { label: "Blog", href: "#blog" },
+  { label: "Blog", href: "/blog" },
   { label: "Contacto", href: "#contacto" },
 ];
 
@@ -305,20 +301,15 @@ export const successCases = {
 export const blog = {
   eyebrow: "Blog",
   title: "Ideas para organizaciones más humanas e inteligentes.",
-  posts: [
-    {
-      title: "IA responsable en educación",
-      text: "Cómo integrar tecnología sin perder criterio humano.",
-    },
-    {
-      title: "Bienestar organizacional medible",
-      text: "Del discurso a programas con seguimiento real.",
-    },
-    {
-      title: "Transformación digital consciente",
-      text: "Innovar sin quemar a los equipos en el intento.",
-    },
-  ] satisfies PostItem[],
+  description:
+    "Artículos y reflexiones sobre inteligencia artificial, bienestar organizacional y transformación digital con enfoque humano.",
+};
+
+export const courses = {
+  eyebrow: "Cursos",
+  title: "Formación para transformar organizaciones.",
+  description:
+    "Conoce los cursos disponibles, su contenido, duración y valor de inscripción.",
 };
 
 export const cta = {
