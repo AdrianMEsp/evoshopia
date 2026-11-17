@@ -17,13 +17,14 @@ const priceFormatter = new Intl.NumberFormat("es-CL", {
 });
 
 export function CoursesView() {
-  const { items: courses, loading, error, retry } = useCatalog(getCourses);
+  const { data: courses, loading, error, retry } = useCatalog(getCourses);
+  const courseList = courses ?? [];
 
   if (loading) return <CatalogSkeleton />;
 
   if (error) return <CatalogError message={error} onRetry={retry} />;
 
-  if (courses.length === 0) {
+  if (courseList.length === 0) {
     return (
       <CatalogEmpty
         title="Todavía no hay cursos publicados"
@@ -34,9 +35,12 @@ export function CoursesView() {
 
   return (
     <div className="grid gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
-      {courses.map((course, index) => (
+      {courseList.map((course, index) => (
         <Reveal key={course.id} delay={index * 70} className="h-full">
-          <article className="flex h-full flex-col overflow-hidden rounded-[22px] border border-line bg-surface shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1.5 hover:shadow-[var(--shadow)]">
+          <article className="flex h-full flex-col overflow-hidden rounded-[22px] 
+          border border-line bg-surface
+          shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1.5 
+          hover:cursor-pointer hover:border-purple-600 hover:shadow-[var(--shadow)]">
             <div className="relative h-48 overflow-hidden bg-brand/10 max-sm:h-40">
               {course.coverUrl ? (
                 <Image
