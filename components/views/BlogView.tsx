@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import Image from "next/image";
-import { ArrowRightIcon } from "@/components/icons";
+import { ArrowRightIcon, CloseIcon } from "@/components/icons";
 import {
   CatalogEmpty,
   CatalogError,
@@ -10,7 +10,7 @@ import {
 } from "@/components/views/CatalogFeedback";
 import { BlogContent } from "@/components/views/BlogContent";
 import { Reveal } from "@/components/ui/Reveal";
-import { getBlogPosts } from "@/lib/catalog";
+import { getBlogPosts, type BlogPost } from "@/lib/catalog";
 import { cn } from "@/lib/cn";
 import { useCatalog } from "@/lib/use-catalog";
 
@@ -130,8 +130,91 @@ function formatDate(value: string | null): string | null {
   }).format(date);
 }
 
+function BlogPostModal({
+  post,
+  onClose,
+}: {
+  post: BlogPost;
+  onClose: () => void;
+}) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
+  const dateLabel = formatDate(post.publishedAt);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    if (!dialog.open) dialog.showModal();
+
+    return () => {
+      if (dialog.open) dialog.close();
+    };
+  }, []);
+
+  return (
+    <dialog
+      ref={dialogRef}
+      aria-labelledby={titleId}
+      onCancel={(event) => {
+        event.preventDefault();
+        onClose();
+      }}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+      className="fixed inset-0 m-0 flex h-full w-full max-w-none items-center justify-center
+       bg-transparent p-4 text-ink backdrop:bg-slate-950/55"
+    >
+      <section className="relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-[24px] border border-line bg-surface shadow-[var(--shadow)]">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Cerrar publicación"
+          className="absolute top-4 right-4 z-10 inline-flex size-10 items-center justify-center rounded-full border border-line bg-surface/90 text-muted transition hover:cursor-pointer hover:border-brand/40 hover:text-ink"
+        >
+          <CloseIcon className="size-5" />
+        </button>
+
+        <div className="relative h-56 overflow-hidden bg-brand/10 max-sm:h-40">
+          {post.coverUrl ? (
+            <Image
+              src={post.coverUrl}
+              alt={post.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 768px"
+              className="object-cover"
+            />
+          ) : (
+            <div aria-hidden="true" className="brand-gradient size-full opacity-20" />
+          )}
+        </div>
+
+        <div className="p-[26px] max-sm:p-5">
+          {dateLabel ? (
+            <p className="text-[0.76rem] font-bold tracking-[0.06em] text-brand uppercase">
+              {dateLabel}
+            </p>
+          ) : null}
+          <h2 id={titleId} className="mt-2 pr-12 text-[1.75rem] leading-tight font-bold tracking-[-0.045em]">
+            {post.title}
+          </h2>
+          <p className="mt-2.5 text-[0.96rem] text-muted">{post.excerpt}</p>
+          {post.author ? (
+            <p className="mt-4 text-[0.82rem] font-semibold text-ink">
+              {post.author}
+            </p>
+          ) : null}
+          <BlogContent content={post.content} />
+        </div>
+      </section>
+    </dialog>
+  );
+}
+
 export function BlogView() {
   const [page, setPage] = useState(1);
+  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const loadPosts = useCallback(() => getBlogPosts(page), [page]);
   const { data, loading, error, retry } = useCatalog(loadPosts);
 
@@ -161,13 +244,21 @@ export function BlogView() {
 
   return (
     <>
-      <div className="">
+      <div className="grid gap-6 md:grid-cols-3 xl:grid-cols-3">
         {posts.map((post, index) => {
           const dateLabel = formatDate(post.publishedAt);
 
           return (
             <Reveal key={post.id} delay={index * 70} className="h-full">
-              <article className="flex h-full flex-col overflow-hidden rounded-[22px] border border-line bg-surface shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1.5 hover:cursor-pointer border-purple-600 hover:shadow-[var(--shadow)]">
+              <article className="relative flex h-full flex-col overflow-hidden rounded-[22px] 
+              border border-line bg-surface shadow-[var(--shadow-soft)] transition duration-200 
+              hover:-translate-y-1.5 hover:border-brand/60 hover:shadow-[var(--shadow)]">
+                <button
+                  type="button"
+                  onClick={() => setSelectedPost(post)}
+                  aria-label={`Leer publicación: ${post.title}`}
+                  className="absolute inset-0 z-10 rounded-[22px] hover:cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                />
                 <div className="relative h-44 overflow-hidden bg-brand/10 max-sm:h-36">
                   {post.coverUrl ? (
                     <Image
@@ -197,7 +288,6 @@ export function BlogView() {
                   <p className="mt-2.5 text-[0.96rem] text-muted">
                     {post.excerpt}
                   </p>
-                  <BlogContent content={post.content} />
                   {post.author ? (
                     <p className="mt-4 text-[0.82rem] font-semibold text-ink">
                       {post.author}
@@ -214,6 +304,9 @@ export function BlogView() {
       <p className="mt-3 text-center text-[0.8rem] text-muted">
         Página {page} de {pageCount}
       </p>
+      {selectedPost ? (
+        <BlogPostModal post={selectedPost} onClose={() => setSelectedPost(null)} />
+      ) : null}
     </>
   );
 }
