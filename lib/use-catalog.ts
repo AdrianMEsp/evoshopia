@@ -4,14 +4,14 @@ import { useCallback, useEffect, useState } from "react";
 import { getErrorMessage } from "@/lib/api";
 
 interface CatalogState<T> {
-  items: T[];
+  data: T | null;
   loading: boolean;
   error: string | null;
 }
 
-export function useCatalog<T>(loader: () => Promise<T[]>) {
+export function useCatalog<T>(loader: () => Promise<T>) {
   const [state, setState] = useState<CatalogState<T>>({
-    items: [],
+    data: null,
     loading: true,
     error: null,
   });
@@ -21,13 +21,13 @@ export function useCatalog<T>(loader: () => Promise<T[]>) {
     let cancelled = false;
 
     loader()
-      .then((items) => {
-        if (!cancelled) setState({ items, loading: false, error: null });
+      .then((data) => {
+        if (!cancelled) setState({ data, loading: false, error: null });
       })
       .catch((loadError) => {
         if (!cancelled) {
           setState({
-            items: [],
+            data: null,
             loading: false,
             error: getErrorMessage(loadError),
           });
