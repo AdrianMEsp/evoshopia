@@ -71,8 +71,13 @@ export interface Course {
 const blogQuery = (page: number) =>
   `/blogs?populate[coverImg][fields][0]=url&sort[0]=publishedAt:desc&pagination[page]=${page}&pagination[pageSize]=${BLOG_PAGE_SIZE}`;
 
-const COURSES_QUERY =
-  "/courses?fields[0]=documentId&fields[1]=name&fields[2]=slug&fields[3]=description&fields[4]=instructor&fields[5]=price&fields[6]=workload&fields[7]=publishedAt&populate[coverImg][fields][0]=url&sort[0]=publishedAt:desc&pagination[pageSize]=100";
+const COURSE_FIELDS =
+  "fields[0]=documentId&fields[1]=name&fields[2]=slug&fields[3]=description&fields[4]=instructor&fields[5]=price&fields[6]=workload&fields[7]=publishedAt";
+
+const COURSES_QUERY = `/courses?${COURSE_FIELDS}&populate[coverImg][fields][0]=url&sort[0]=publishedAt:desc&pagination[pageSize]=100`;
+
+const courseBySlugQuery = (slug: string) =>
+  `/courses?${COURSE_FIELDS}&filters[slug][$eq]=${encodeURIComponent(slug)}&populate[coverImg][fields][0]=url&pagination[pageSize]=1`;
 
 function toId(value: string | number): string {
   return String(value);
@@ -109,13 +114,8 @@ export async function getBlogPosts(
   };
 }
 
-export async function getCourses(): Promise<Course[]> {
-  const response = await apiFetch<CollectionResponse<StrapiCourse>>(
-    COURSES_QUERY,
-    { auth: false },
-  );
-
-  return (Array.isArray(response?.data) ? response.data : []).map((course) => ({
+function toCourse(course: StrapiCourse): Course {
+  return {
     id: toId(course.documentId ?? course.id),
     name: course.name,
     slug: course.slug,
@@ -127,5 +127,24 @@ export async function getCourses(): Promise<Course[]> {
         ? course.workload
         : null,
     coverUrl: resolveMediaUrl(course.coverImg?.url),
-  }));
+  };
+}
+
+export async function getCourses(): Promise<Course[]> {
+  const response = await apiFetch<CollectionResponse<StrapiCourse>>(
+    COURSES_QUERY,
+    { auth: false },
+  );
+
+  return (Array.isArray(response?.data) ? response.data : []).map(toCourse);
+}
+
+export async function getCourseBySlug(slug: string): Promise<Course | null> {
+  const response = await apiFetch<CollectionResponse<StrapiCourse>>(
+    courseBySlugQuery(slug),
+    { auth: false },
+  );
+
+  const course = response?.data?.[0];
+  return course ? toCourse(course) : null;
 }

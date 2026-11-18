@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import {
   CatalogEmpty,
   CatalogError,
@@ -37,10 +38,11 @@ export function CoursesView() {
     <div className="grid gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
       {courseList.map((course, index) => (
         <Reveal key={course.id} delay={index * 70} className="h-full">
-          <article className="flex h-full flex-col overflow-hidden rounded-[22px] 
-          border border-line bg-surface
-          shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1.5 
-          hover:cursor-pointer hover:border-purple-600 hover:shadow-[var(--shadow)]">
+          <Link
+            href={`/courses/${course.slug}`}
+            aria-label={`Ver detalles de ${course.name}`}
+            className="flex h-full flex-col overflow-hidden rounded-[22px] border border-line bg-surface shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1.5 hover:cursor-pointer hover:border-brand/60 hover:shadow-[var(--shadow)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+          >
             <div className="relative h-48 overflow-hidden bg-brand/10 max-sm:h-40">
               {course.coverUrl ? (
                 <Image
@@ -79,7 +81,7 @@ export function CoursesView() {
                 {priceFormatter.format(course.price)}
               </p>
             </div>
-          </article>
+          </Link>
         </Reveal>
       ))}
     </div>
