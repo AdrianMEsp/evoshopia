@@ -59,6 +59,7 @@ export const BLOG_PAGE_SIZE = 5;
 
 export interface Course {
   id: string;
+  documentId: string;
   name: string;
   slug: string;
   description: string;
@@ -117,6 +118,7 @@ export async function getBlogPosts(
 function toCourse(course: StrapiCourse): Course {
   return {
     id: toId(course.documentId ?? course.id),
+    documentId: course.documentId,
     name: course.name,
     slug: course.slug,
     description: course.description,

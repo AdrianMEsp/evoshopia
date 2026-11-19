@@ -7,14 +7,17 @@ import AuthAlert from "@/components/auth/AuthAlert";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ArrowRightIcon } from "@/components/icons";
 import { CatalogEmpty, CatalogError } from "@/components/views/CatalogFeedback";
-import { getUserDisplayName } from "@/lib/auth";
+import { getErrorMessage } from "@/lib/api";
 import { getCourseBySlug } from "@/lib/catalog";
+import { startCourseCheckout } from "@/lib/flow";
 import { useCatalog } from "@/lib/use-catalog";
 
 type PurchaseFeedback = {
-  tone: "success" | "info";
+  tone: "success" | "info" | "error";
   message: string;
   loginHref?: string;
+  linkHref?: string;
+  linkLabel?: string;
 };
 
 const priceFormatter = new Intl.NumberFormat("es-CL", {
@@ -26,27 +29,55 @@ const priceFormatter = new Intl.NumberFormat("es-CL", {
 export function CourseDetailView({ slug }: { slug: string }) {
   const { status, user } = useAuth();
   const [feedback, setFeedback] = useState<PurchaseFeedback | null>(null);
+  const [isStartingPayment, setIsStartingPayment] = useState(false);
   const loadCourse = useCallback(() => getCourseBySlug(slug), [slug]);
   const { data: course, loading, error, retry } = useCatalog(loadCourse);
 
   const loginHref = `/login?next=${encodeURIComponent(`/courses/${slug}`)}`;
 
-  const handlePurchase = () => {
-    if (status === "loading") return;
+  const handlePurchase = async () => {
+    if (status === "loading" || isStartingPayment) return;
 
-    if (status === "authenticated") {
+    if (status !== "authenticated" || !user) {
       setFeedback({
-        tone: "success",
-        message: `Sesión iniciada como ${getUserDisplayName(user)}. El pago estará disponible próximamente.`,
+        tone: "info",
+        message: "Debes iniciar sesión para comprar este curso.",
+        loginHref,
       });
       return;
     }
 
-    setFeedback({
-      tone: "info",
-      message: "Debes iniciar sesión para comprar este curso.",
-      loginHref,
-    });
+    if (!course) return;
+
+    setIsStartingPayment(true);
+    setFeedback(null);
+
+    try {
+      const checkout = await startCourseCheckout(course.documentId);
+
+      if (checkout.alreadyOwned) {
+        setFeedback({
+          tone: "success",
+          message: "Ya tienes acceso a este curso.",
+          linkHref: "/dashboard",
+          linkLabel: "Ir a mis cursos",
+        });
+        return;
+      }
+
+      if (!checkout.url) {
+        throw new Error("Flow no devolvió la URL de pago.");
+      }
+
+      window.location.assign(checkout.url);
+    } catch (purchaseError) {
+      setFeedback({
+        tone: "error",
+        message: getErrorMessage(purchaseError),
+      });
+    } finally {
+      setIsStartingPayment(false);
+    }
   };
 
   if (loading) {
@@ -130,11 +161,17 @@ export function CourseDetailView({ slug }: { slug: string }) {
         <button
           type="button"
           onClick={handlePurchase}
-          disabled={status === "loading"}
+          disabled={status === "loading" || isStartingPayment}
           className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2.5 rounded-full border border-transparent brand-gradient px-5 text-base font-bold text-white shadow-[0_14px_30px_rgb(91_34_232_/_0.24)] transition duration-200 hover:-translate-y-0.5 hover:cursor-pointer disabled:cursor-wait disabled:opacity-60"
         >
-          {status === "loading" ? "Verificando sesión..." : "Comprar curso"}
-          {status === "loading" ? null : <ArrowRightIcon className="size-4" />}
+          {status === "loading"
+            ? "Verificando sesión..."
+            : isStartingPayment
+              ? "Redirigiendo a Flow..."
+              : "Comprar curso"}
+          {status === "loading" || isStartingPayment ? null : (
+            <ArrowRightIcon className="size-4" />
+          )}
         </button>
 
         {feedback ? (
@@ -152,6 +189,17 @@ export function CourseDetailView({ slug }: { slug: string }) {
                   </Link>
                 </>
               ) : null}
+              {feedback.linkHref && feedback.linkLabel ? (
+                <>
+                  {" "}
+                  <Link
+                    href={feedback.linkHref}
+                    className="font-bold underline underline-offset-2"
+                  >
+                    {feedback.linkLabel}
+                  </Link>
+                </>
+              ) : null}
             </AuthAlert>
           </div>
         ) : null}
@@ -160,8 +208,7 @@ export function CourseDetailView({ slug }: { slug: string }) {
           href="/courses"
           className="mt-5 inline-flex text-[0.88rem] font-semibold text-muted transition hover:text-brand"
         >
-          {/* Volver a los cursos */}
-          Mañana 18/11 vamos pushear los cambios y vamos a integrar flow
+          Volver a los cursos
         </Link>
       </section>
     </div>
