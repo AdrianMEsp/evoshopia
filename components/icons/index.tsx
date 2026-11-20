@@ -201,6 +201,16 @@ export function CloseIcon(props: IconProps): ReactElement {
   );
 }
 
+export function CartIcon(props: IconProps): ReactElement {
+  return (
+    <Glyph {...props}>
+      <circle cx="9" cy="20" r="1.3" />
+      <circle cx="18" cy="20" r="1.3" />
+      <path d="M3 4h2.2l2.1 11.2h10.9L20.5 7H6" />
+    </Glyph>
+  );
+}
+
 export function PlayIcon(props: IconProps): ReactElement {
   return (
     <Glyph {...props}>
@@ -257,6 +267,7 @@ export const iconMap = {
   "arrow-down": ArrowDownIcon,
   menu: MenuIcon,
   close: CloseIcon,
+  cart: CartIcon,
   play: PlayIcon,
   clock: ClockIcon,
   mail: MailIcon,

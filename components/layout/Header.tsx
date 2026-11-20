@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { MenuIcon, CloseIcon } from "@/components/icons";
+import { MenuIcon, CloseIcon, CartIcon } from "@/components/icons";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useCart } from "@/components/cart/CartProvider";
 import { SignOutDialog } from "@/components/auth/SignOutDialog";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { navLinks } from "@/content/site";
-import { getUserDisplayName } from "@/lib/auth";
+import { canPurchaseCourses, getUserDisplayName } from "@/lib/auth";
 import { cn } from "@/lib/cn";
 import Logo from "@/public/images/brand/evosistencia.png";
 
@@ -22,6 +23,7 @@ export function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, status, signOut } = useAuth();
+  const { itemCount } = useCart();
   const onHome = pathname === "/";
   const resolveHref = (href: string) => {
     if (href.startsWith("/")) return href;
@@ -29,6 +31,7 @@ export function Header() {
     return href;
   };
   const isAuthenticated = status === "authenticated" && Boolean(user);
+  const canPurchase = isAuthenticated && canPurchaseCourses(user);
   const displayName = getUserDisplayName(user).split(" ")[0];
 
   useEffect(() => {
@@ -125,6 +128,24 @@ export function Header() {
         <div className="hidden shrink-0 items-center gap-3 lg:flex">
           {isAuthenticated ? (
             <>
+              {canPurchase ? (
+                <Link
+                  href="/cart"
+                  onClick={closeMenu}
+                  aria-label={`Mi carrito, ${itemCount} ${itemCount === 1 ? "curso" : "cursos"}`}
+                  className="relative inline-flex size-[46px] shrink-0 items-center justify-center rounded-full border border-line bg-surface text-muted shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:text-brand"
+                >
+                  <CartIcon className="size-5" />
+                  {itemCount > 0 ? (
+                    <span
+                      aria-hidden="true"
+                      className="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full brand-gradient text-[0.68rem] font-bold text-white"
+                    >
+                      {itemCount}
+                    </span>
+                  ) : null}
+                </Link>
+              ) : null}
               <Button
                 href="/dashboard"
                 variant="secondary"
@@ -209,6 +230,16 @@ export function Header() {
 
           {isAuthenticated ? (
             <>
+              {canPurchase ? (
+                <Link
+                  href="/cart"
+                  onClick={closeMenu}
+                  className="flex min-h-[44px] w-full items-center gap-3 text-base font-semibold text-muted transition-colors hover:text-ink"
+                >
+                  <CartIcon className="size-5" />
+                  Mi carrito {itemCount > 0 ? `(${itemCount})` : ""}
+                </Link>
+              ) : null}
               <Button href="/dashboard" variant="secondary" onClick={closeMenu} className="w-full text-brand">
                 {displayName}
               </Button>

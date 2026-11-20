@@ -312,6 +312,13 @@ export const courses = {
     "Conoce los cursos disponibles, su contenido, duración y valor de inscripción.",
 };
 
+export const cart = {
+  eyebrow: "Carrito",
+  title: "Revisa tus cursos antes de pagar.",
+  description:
+    "Aquí se agrupan los cursos que elegiste. Puedes quitar los que ya no quieras y pagar todos juntos.",
+};
+
 export const cta = {
   title: "Agenda una reunión estratégica.",
   text: "Conversemos cómo Evosistencia puede ayudar a tu organización a integrar tecnología, bienestar e innovación.",

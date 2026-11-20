@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { RequireAuth } from "@/components/auth/RequireAuth";
 import { Container } from "@/components/ui/Container";
 import { CourseDetailView } from "@/components/views/CourseDetailView";
 import { site } from "@/content/site";
@@ -16,8 +17,10 @@ export default async function CourseDetailPage({
   const { slug } = await params;
 
   return (
-    <Container className="py-[62px] lg:py-[82px]">
-      <CourseDetailView slug={slug} />
-    </Container>
+    <RequireAuth>
+      <Container className="py-[62px] lg:py-[82px]">
+        <CourseDetailView slug={slug} />
+      </Container>
+    </RequireAuth>
   );
 }

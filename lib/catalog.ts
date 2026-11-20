@@ -9,11 +9,12 @@ interface StrapiBlogPost {
   id: number;
   documentId: string;
   title: string;
-  slug: string;
-  excerpt: string;
+  slug?: string | null;
+  subtitle?: string | null;
+  excerpt?: string | null;
   author?: string | null;
   publishedAt?: string | null;
-  content?: BlocksContent | null;
+  content?: BlocksContent | string | null;
   coverImg?: StrapiMedia | null;
 }
 
@@ -28,13 +29,18 @@ interface StrapiCourse {
   workload?: number | null;
   publishedAt?: string | null;
   coverImg?: StrapiMedia | null;
+  userHasAccess?: boolean | null;
+  inUserCart?: boolean | null;
 }
 
 interface CollectionResponse<T> {
   data?: T[] | null;
   meta?: {
     pagination?: {
+      page?: number;
+      pageSize?: number;
       pageCount?: number;
+      total?: number;
     };
   };
 }
@@ -46,7 +52,7 @@ export interface BlogPost {
   excerpt: string;
   author: string | null;
   publishedAt: string | null;
-  content: BlocksContent;
+  content: BlocksContent | string;
   coverUrl: string | null;
 }
 
@@ -67,18 +73,42 @@ export interface Course {
   price: number;
   workload: number | null;
   coverUrl: string | null;
+  userHasAccess: boolean;
+  inUserCart: boolean;
 }
 
 const blogQuery = (page: number) =>
-  `/blogs?populate[coverImg][fields][0]=url&sort[0]=publishedAt:desc&pagination[page]=${page}&pagination[pageSize]=${BLOG_PAGE_SIZE}`;
+  `/blogs?populate=coverImg&sort[0]=publishedAt:desc&pagination[page]=${page}&pagination[pageSize]=${BLOG_PAGE_SIZE}`;
 
-const COURSE_FIELDS =
-  "fields[0]=documentId&fields[1]=name&fields[2]=slug&fields[3]=description&fields[4]=instructor&fields[5]=price&fields[6]=workload&fields[7]=publishedAt";
+const CATALOG_PAGE_SIZE = 30;
+const MAX_CATALOG_PAGES = 20;
 
-const COURSES_QUERY = `/courses?${COURSE_FIELDS}&populate[coverImg][fields][0]=url&sort[0]=publishedAt:desc&pagination[pageSize]=100`;
+const catalogQuery = (page: number) =>
+  `/catalog?page=${page}&pageSize=${CATALOG_PAGE_SIZE}&sort=newest`;
 
-const courseBySlugQuery = (slug: string) =>
-  `/courses?${COURSE_FIELDS}&filters[slug][$eq]=${encodeURIComponent(slug)}&populate[coverImg][fields][0]=url&pagination[pageSize]=1`;
+async function fetchCatalogPage(page: number) {
+  return apiFetch<CollectionResponse<StrapiCourse>>(catalogQuery(page));
+}
+
+async function fetchCatalogCourses(): Promise<StrapiCourse[]> {
+  const firstPage = await fetchCatalogPage(1);
+  const courses = Array.isArray(firstPage?.data) ? firstPage.data : [];
+  const pageCount = firstPage?.meta?.pagination?.pageCount ?? 1;
+  const totalPages = Math.min(Math.max(1, pageCount), MAX_CATALOG_PAGES);
+
+  if (totalPages <= 1) return courses;
+
+  const remainingPages = await Promise.all(
+    Array.from({ length: totalPages - 1 }, (_, index) =>
+      fetchCatalogPage(index + 2),
+    ),
+  );
+
+  return remainingPages.reduce<StrapiCourse[]>(
+    (all, page) => all.concat(Array.isArray(page?.data) ? page.data : []),
+    courses,
+  );
+}
 
 function toId(value: string | number): string {
   return String(value);
@@ -97,11 +127,11 @@ export async function getBlogPosts(
     (post) => ({
       id: toId(post.documentId ?? post.id),
       title: post.title,
-      slug: post.slug,
-      excerpt: post.excerpt,
+      slug: post.slug ?? toId(post.documentId ?? post.id),
+      excerpt: post.subtitle?.trim() || post.excerpt?.trim() || "",
       author: post.author?.trim() || null,
       publishedAt: post.publishedAt ?? null,
-      content: Array.isArray(post.content) ? post.content : [],
+      content: post.content ?? [],
       coverUrl: resolveMediaUrl(post.coverImg?.url),
     }),
   );
@@ -129,24 +159,18 @@ function toCourse(course: StrapiCourse): Course {
         ? course.workload
         : null,
     coverUrl: resolveMediaUrl(course.coverImg?.url),
+    userHasAccess: Boolean(course.userHasAccess),
+    inUserCart: Boolean(course.inUserCart),
   };
 }
 
 export async function getCourses(): Promise<Course[]> {
-  const response = await apiFetch<CollectionResponse<StrapiCourse>>(
-    COURSES_QUERY,
-    { auth: false },
-  );
-
-  return (Array.isArray(response?.data) ? response.data : []).map(toCourse);
+  const courses = await fetchCatalogCourses();
+  return courses.map(toCourse);
 }
 
 export async function getCourseBySlug(slug: string): Promise<Course | null> {
-  const response = await apiFetch<CollectionResponse<StrapiCourse>>(
-    courseBySlugQuery(slug),
-    { auth: false },
-  );
-
-  const course = response?.data?.[0];
+  const courses = await fetchCatalogCourses();
+  const course = courses.find((item) => item.slug === slug);
   return course ? toCourse(course) : null;
 }
