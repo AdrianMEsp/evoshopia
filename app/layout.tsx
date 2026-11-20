@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import { CartProvider } from "@/components/cart/CartProvider";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { organizationJsonLd, site } from "@/content/site";
@@ -58,9 +59,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
 
         <AuthProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <CartProvider>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>

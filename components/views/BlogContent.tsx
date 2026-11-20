@@ -7,7 +7,29 @@ import {
 } from "@strapi/blocks-react-renderer";
 import { resolveMediaUrl } from "@/lib/api";
 
-export function BlogContent({ content }: { content: BlocksContent }) {
+export function BlogContent({
+  content,
+}: {
+  content: BlocksContent | string | null;
+}) {
+  if (typeof content === "string") {
+    const text = content.trim();
+    if (!text) return null;
+
+    return (
+      <div className="mt-5 border-t border-line pt-4">
+        {text.split(/\n{2,}/).map((block, index) => (
+          <p
+            key={index}
+            className="mt-3 whitespace-pre-line text-[0.95rem] leading-7 text-muted first:mt-0"
+          >
+            {block}
+          </p>
+        ))}
+      </div>
+    );
+  }
+
   if (!Array.isArray(content) || content.length === 0) return null;
 
   return (

@@ -21,6 +21,11 @@ const errorTranslations: Record<string, string> = {
   "Invalid token": "El enlace o código no es válido.",
   "Missing authentication": "Debes iniciar sesión para continuar.",
   "Too many requests": "Demasiados intentos. Inténtalo más tarde.",
+  "Este curso ya está en tu carrito": "Este curso ya está en tu carrito.",
+  "Ya tienes este curso": "Ya tienes acceso a este curso.",
+  "Tu carrito está vacío": "Tu carrito está vacío.",
+  "No se pudo iniciar el pago con Flow":
+    "No se pudo iniciar el pago. Tu carrito sigue disponible para intentarlo nuevamente.",
   "Internal Server Error":
     "Ocurrió un error en el servidor. Inténtalo nuevamente en unos minutos.",
 };

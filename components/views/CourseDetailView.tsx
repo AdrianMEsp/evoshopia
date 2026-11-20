@@ -5,17 +5,18 @@ import Image from "next/image";
 import Link from "next/link";
 import AuthAlert from "@/components/auth/AuthAlert";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useCart } from "@/components/cart/CartProvider";
 import { ArrowRightIcon } from "@/components/icons";
+import { Button } from "@/components/ui/Button";
 import { CatalogEmpty, CatalogError } from "@/components/views/CatalogFeedback";
 import { getErrorMessage } from "@/lib/api";
+import { canPurchaseCourses } from "@/lib/auth";
 import { getCourseBySlug } from "@/lib/catalog";
-import { startCourseCheckout } from "@/lib/flow";
 import { useCatalog } from "@/lib/use-catalog";
 
 type PurchaseFeedback = {
   tone: "success" | "info" | "error";
   message: string;
-  loginHref?: string;
   linkHref?: string;
   linkLabel?: string;
 };
@@ -28,55 +29,60 @@ const priceFormatter = new Intl.NumberFormat("es-CL", {
 
 export function CourseDetailView({ slug }: { slug: string }) {
   const { status, user } = useAuth();
+  const { isInCart, isPending, addItem } = useCart();
   const [feedback, setFeedback] = useState<PurchaseFeedback | null>(null);
-  const [isStartingPayment, setIsStartingPayment] = useState(false);
   const loadCourse = useCallback(() => getCourseBySlug(slug), [slug]);
   const { data: course, loading, error, retry } = useCatalog(loadCourse);
+  const canPurchase = canPurchaseCourses(user);
 
-  const loginHref = `/login?next=${encodeURIComponent(`/courses/${slug}`)}`;
+  const handleAddToCart = async () => {
+    if (status === "loading" || !course) return;
 
-  const handlePurchase = async () => {
-    if (status === "loading" || isStartingPayment) return;
-
-    if (status !== "authenticated" || !user) {
+    if (!canPurchase) {
       setFeedback({
         tone: "info",
-        message: "Debes iniciar sesión para comprar este curso.",
-        loginHref,
+        message: "Las cuentas de institución no compran cursos.",
+        linkHref: "/courses",
+        linkLabel: "Ver cursos",
       });
       return;
     }
 
-    if (!course) return;
+    if (course.userHasAccess) {
+      setFeedback({
+        tone: "success",
+        message: "Ya tienes acceso a este curso.",
+        linkHref: "/dashboard",
+        linkLabel: "Ir a mis cursos",
+      });
+      return;
+    }
 
-    setIsStartingPayment(true);
+    if (isInCart(course.documentId)) {
+      setFeedback({
+        tone: "info",
+        message: "Este curso ya está en tu carrito.",
+        linkHref: "/cart",
+        linkLabel: "Ir al carrito",
+      });
+      return;
+    }
+
     setFeedback(null);
 
     try {
-      const checkout = await startCourseCheckout(course.documentId);
-
-      if (checkout.alreadyOwned) {
-        setFeedback({
-          tone: "success",
-          message: "Ya tienes acceso a este curso.",
-          linkHref: "/dashboard",
-          linkLabel: "Ir a mis cursos",
-        });
-        return;
-      }
-
-      if (!checkout.url) {
-        throw new Error("Flow no devolvió la URL de pago.");
-      }
-
-      window.location.assign(checkout.url);
-    } catch (purchaseError) {
+      await addItem(course.documentId);
+      setFeedback({
+        tone: "success",
+        message: "Curso agregado a tu carrito.",
+        linkHref: "/cart",
+        linkLabel: "Ir al carrito",
+      });
+    } catch (addError) {
       setFeedback({
         tone: "error",
-        message: getErrorMessage(purchaseError),
+        message: getErrorMessage(addError),
       });
-    } finally {
-      setIsStartingPayment(false);
     }
   };
 
@@ -104,6 +110,9 @@ export function CourseDetailView({ slug }: { slug: string }) {
       />
     );
   }
+
+  const courseInCart = isInCart(course.documentId);
+  const coursePending = isPending(course.documentId);
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-start">
@@ -158,37 +167,45 @@ export function CourseDetailView({ slug }: { slug: string }) {
           </div>
         </dl>
 
-        <button
-          type="button"
-          onClick={handlePurchase}
-          disabled={status === "loading" || isStartingPayment}
-          className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2.5 rounded-full border border-transparent brand-gradient px-5 text-base font-bold text-white shadow-[0_14px_30px_rgb(91_34_232_/_0.24)] transition duration-200 hover:-translate-y-0.5 hover:cursor-pointer disabled:cursor-wait disabled:opacity-60"
-        >
-          {status === "loading"
-            ? "Verificando sesión..."
-            : isStartingPayment
-              ? "Redirigiendo a Flow..."
-              : "Comprar curso"}
-          {status === "loading" || isStartingPayment ? null : (
-            <ArrowRightIcon className="size-4" />
-          )}
-        </button>
+        {course.userHasAccess ? (
+          <Button
+            href="/dashboard"
+            variant="secondary"
+            className="mt-6 w-full text-brand"
+          >
+            Ya es tuyo · Ir a mis cursos
+          </Button>
+        ) : canPurchase && courseInCart ? (
+          <Button href="/cart" variant="secondary" className="mt-6 w-full text-brand">
+            Ir a mi carrito
+          </Button>
+        ) : canPurchase ? (
+          <button
+            type="button"
+            onClick={() => void handleAddToCart()}
+            disabled={status === "loading" || coursePending}
+            className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2.5 rounded-full border border-transparent brand-gradient px-5 text-base font-bold text-white shadow-[0_14px_30px_rgb(91_34_232_/_0.24)] transition duration-200 hover:-translate-y-0.5 hover:cursor-pointer disabled:cursor-wait disabled:opacity-60"
+          >
+            {status === "loading"
+              ? "Verificando sesión..."
+              : coursePending
+                ? "Agregando al carrito..."
+                : "Agregar al carrito"}
+            {status === "loading" || coursePending ? null : (
+              <ArrowRightIcon className="size-4" />
+            )}
+          </button>
+        ) : (
+          <AuthAlert tone="info">
+            Las cuentas de institución no compran cursos. El acceso se gestiona
+            desde la institución.
+          </AuthAlert>
+        )}
 
         {feedback ? (
           <div className="mt-4">
             <AuthAlert tone={feedback.tone}>
               {feedback.message}
-              {feedback.loginHref ? (
-                <>
-                  {" "}
-                  <Link
-                    href={feedback.loginHref}
-                    className="font-bold underline underline-offset-2"
-                  >
-                    Ingresar
-                  </Link>
-                </>
-              ) : null}
               {feedback.linkHref && feedback.linkLabel ? (
                 <>
                   {" "}

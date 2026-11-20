@@ -322,6 +322,10 @@ export function getUserInitials(user?: AuthUser | null): string {
   return initials.toUpperCase() || "EV";
 }
 
+export function canPurchaseCourses(user?: AuthUser | null): boolean {
+  return Boolean(user) && user?.role?.type !== "institution";
+}
+
 export function getUserRoleLabel(user?: AuthUser | null): string {
   if (!user) return "Participante";
 
