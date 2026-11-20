@@ -34,12 +34,21 @@ interface StrapiCourse {
   course_sections?: StrapiCourseSection[] | null;
 }
 
-interface CourseSummary {
+interface CatalogCourse {
   documentId: string;
+  userHasAccess?: boolean | null;
 }
 
-interface CoursesResponse {
-  data: CourseSummary[];
+interface CatalogResponse {
+  data: CatalogCourse[];
+  meta?: { pagination?: { pageCount?: number } };
+}
+
+interface CourseProgress {
+  totalLessons: number;
+  completedLessons: number;
+  percentage: number;
+  completedLessonIds: string[];
 }
 
 export interface DashboardLesson {
@@ -66,6 +75,8 @@ export interface DashboardCourse {
   coverUrl: string | null;
   lessonCount: number;
   lessons: DashboardLesson[];
+  progress: CourseProgress | null;
+  currentLesson: DashboardLesson | null;
 }
 
 export interface DashboardData {
@@ -73,33 +84,57 @@ export interface DashboardData {
   lessons: DashboardLesson[];
 }
 
-const COURSES_QUERY =
-  "/courses?fields[0]=documentId&sort[0]=publishedAt:desc&pagination[pageSize]=100";
+const CATALOG_PAGE_SIZE = 30;
+
+const catalogQuery = (page: number) =>
+  `/catalog?page=${page}&pageSize=${CATALOG_PAGE_SIZE}&sort=newest`;
 
 function toOrder(value: number | null | undefined): number {
   return typeof value === "number" && Number.isFinite(value) ? value : 0;
 }
 
+async function getAccessibleCourseIds(): Promise<string[]> {
+  const firstPage = await apiFetch<CatalogResponse>(catalogQuery(1));
+  const pageCount = firstPage.meta?.pagination?.pageCount ?? 1;
+  const remainingPages = await Promise.all(
+    Array.from({ length: Math.max(pageCount - 1, 0) }, (_, index) =>
+      apiFetch<CatalogResponse>(catalogQuery(index + 2)),
+    ),
+  );
+
+  return [firstPage, ...remainingPages]
+    .flatMap((page) => (Array.isArray(page.data) ? page.data : []))
+    .filter((course) => course.userHasAccess)
+    .map((course) => course.documentId)
+    .filter((documentId): documentId is string => Boolean(documentId));
+}
+
 export async function getDashboardData(): Promise<DashboardData> {
-  const response = await apiFetch<CoursesResponse>(COURSES_QUERY);
-  const summaries = Array.isArray(response?.data) ? response.data : [];
+  const documentIds = await getAccessibleCourseIds();
   const courseResults = await Promise.allSettled(
-    summaries
-      .map((course) => course.documentId)
-      .filter((documentId): documentId is string => Boolean(documentId))
-      .map((documentId) =>
+    documentIds.map(async (documentId) => {
+      const [course, progress] = await Promise.all([
         apiFetch<StrapiCourse>(`/courses/${documentId}/content`),
-      ),
+        apiFetch<CourseProgress>(`/courses/${documentId}/progress`).catch(
+          () => null,
+        ),
+      ]);
+      return { course, progress };
+    }),
   );
 
   const courses = courseResults
     .filter(
-      (result): result is PromiseFulfilledResult<StrapiCourse> =>
-        result.status === "fulfilled",
+      (
+        result,
+      ): result is PromiseFulfilledResult<{
+        course: StrapiCourse;
+        progress: CourseProgress | null;
+      }> => result.status === "fulfilled",
     )
     .map((result) => result.value);
 
-  const normalizedCourses = courses.map((course) => {
+  const normalizedCourses = courses.map(({ course, progress }) => {
     const sections = [...(course.course_sections ?? [])].sort(
       (a, b) => toOrder(a.order) - toOrder(b.order),
     );
@@ -120,6 +155,11 @@ export async function getDashboardData(): Promise<DashboardData> {
         })),
     );
 
+    const completedLessonIds = new Set(progress?.completedLessonIds ?? []);
+    const currentLesson =
+      lessons.find((lesson) => !completedLessonIds.has(lesson.documentId)) ??
+      null;
+
     return {
       id: course.id,
       documentId: course.documentId,
@@ -135,6 +175,8 @@ export async function getDashboardData(): Promise<DashboardData> {
       coverUrl: resolveMediaUrl(course.coverImg?.url),
       lessonCount: lessons.length,
       lessons,
+      progress,
+      currentLesson,
     } satisfies DashboardCourse;
   });
 

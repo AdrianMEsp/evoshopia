@@ -1,12 +1,16 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import { PlayIcon } from "@/components/icons";
 import { cn } from "@/lib/cn";
-import type { DashboardLesson } from "@/lib/dashboard";
+import type { DashboardCourse } from "@/lib/dashboard";
 
-export function LessonLibrary({ lessons }: { lessons: DashboardLesson[] }) {
+export function LessonLibrary({ courses }: { courses: DashboardCourse[] }) {
+  const lessons = courses.flatMap((course) =>
+    course.currentLesson ? [course.currentLesson] : [],
+  );
   const [category, setCategory] = useState("Todos");
   const courseNames = Array.from(new Set(lessons.map((lesson) => lesson.courseName)));
   const categories = ["Todos", ...courseNames];
@@ -24,14 +28,14 @@ export function LessonLibrary({ lessons }: { lessons: DashboardLesson[] }) {
             Lecciones de tus cursos
           </h2>
           <p className="mt-2 text-[0.96rem] text-muted">
-            Contenidos y secciones cargados desde la base de datos.
+            La lección en curso o la próxima de cada uno de tus cursos.
           </p>
         </div>
       </div>
 
       {lessons.length === 0 ? (
         <div className="rounded-[20px] border border-dashed border-line bg-surface p-8 text-center text-[0.92rem] text-muted">
-          Todavía no hay lecciones publicadas.
+          No hay lecciones en curso ni próximas en tus cursos.
         </div>
       ) : (
         <>
@@ -64,35 +68,38 @@ export function LessonLibrary({ lessons }: { lessons: DashboardLesson[] }) {
 
           <div className="grid gap-[18px] sm:grid-cols-2 xl:grid-cols-3">
             {visible.map((lesson) => (
-              <article
-                key={`${lesson.courseDocumentId}-${lesson.id}`}
-                className="flex h-full flex-col rounded-[20px] border border-line bg-surface p-[18px] shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1.5 hover:shadow-[var(--shadow)] max-sm:p-4"
+              <Link
+                key={`${lesson.courseDocumentId}-${lesson.documentId}`}
+                href={`/dashboard/courses/${lesson.courseDocumentId}?lesson=${encodeURIComponent(lesson.documentId)}`}
+                className="flex h-full rounded-[20px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               >
-                <div className="flex items-start justify-between gap-3">
-                  <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-brand/10 text-brand">
-                    <PlayIcon className="size-[18px] translate-x-0.5" />
-                  </span>
-                  <span className="max-w-[65%] truncate rounded-full border border-line bg-surface-2 px-3 py-1 text-[0.7rem] font-extrabold tracking-[0.04em] text-muted uppercase">
-                    {lesson.courseName}
-                  </span>
-                </div>
+                <article className="flex h-full w-full flex-col rounded-[20px] border border-line bg-surface p-[18px] shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1.5 hover:shadow-[var(--shadow)] max-sm:p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-brand/10 text-brand">
+                      <PlayIcon className="size-[18px] translate-x-0.5" />
+                    </span>
+                    <span className="max-w-[65%] truncate rounded-full border border-line bg-surface-2 px-3 py-1 text-[0.7rem] font-extrabold tracking-[0.04em] text-muted uppercase">
+                      {lesson.courseName}
+                    </span>
+                  </div>
 
-                <h3 className="mt-4 text-[1.02rem] leading-tight font-bold tracking-[-0.03em]">
-                  {lesson.title}
-                </h3>
-                <p className="mt-2 grow text-[0.88rem] text-muted">
-                  {lesson.description}
-                </p>
+                  <h3 className="mt-4 text-[1.02rem] leading-tight font-bold tracking-[-0.03em]">
+                    {lesson.title}
+                  </h3>
+                  <p className="mt-2 grow text-[0.88rem] text-muted">
+                    {lesson.description}
+                  </p>
 
-                <div className="mt-3.5 flex items-center justify-between gap-3 border-t border-line pt-3 text-[0.78rem] text-muted">
-                  <span className="truncate font-semibold text-ink">
-                    {lesson.sectionTitle}
-                  </span>
-                  <span className="shrink-0">
-                    {lesson.order > 0 ? `Lección ${lesson.order}` : "Lección"}
-                  </span>
-                </div>
-              </article>
+                  <div className="mt-3.5 flex items-center justify-between gap-3 border-t border-line pt-3 text-[0.78rem] text-muted">
+                    <span className="truncate font-semibold text-ink">
+                      {lesson.sectionTitle}
+                    </span>
+                    <span className="shrink-0">
+                      {lesson.order > 0 ? `Lección ${lesson.order}` : "Lección"}
+                    </span>
+                  </div>
+                </article>
+              </Link>
             ))}
           </div>
         </>
