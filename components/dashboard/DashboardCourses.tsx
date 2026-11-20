@@ -1,6 +1,12 @@
 import Link from "next/link";
 
-import { ArrowRightIcon, iconMap, type IconName } from "@/components/icons";
+import {
+  ArrowRightIcon,
+  CheckIcon,
+  PlayIcon,
+  iconMap,
+  type IconName,
+} from "@/components/icons";
 import type { DashboardCourse } from "@/lib/dashboard";
 
 const courseIcons: IconName[] = [
@@ -51,18 +57,31 @@ export function DashboardCourses({ courses }: { courses: DashboardCourse[] }) {
         <div className="grid gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
           {courses.map((course, index) => {
             const Icon = iconMap[courseIcons[index % courseIcons.length]];
+            const completed = course.progress?.percentage === 100;
 
             return (
               <article
                 key={course.documentId}
-                className="flex h-full flex-col rounded-[20px] border border-line bg-surface p-[22px] shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1.5 hover:shadow-[var(--shadow)] max-sm:p-[18px]"
+                className="relative flex h-full flex-col rounded-[20px] border border-line bg-surface p-[22px] shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1.5 hover:shadow-[var(--shadow)] max-sm:p-[18px]"
               >
                 <div className="flex items-start justify-between gap-3">
                   <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-brand/10 text-brand">
                     <Icon className="size-5" />
                   </span>
-                  <span className="rounded-full border border-line bg-surface-2 px-3 py-1 text-[0.7rem] font-extrabold tracking-[0.04em] text-muted uppercase">
-                    Curso
+                  <span
+                    className={`rounded-full border px-3 py-1 text-[0.7rem] font-extrabold tracking-[0.04em] uppercase ${
+                      completed
+                        ? "border-teal/30 bg-teal/10 text-teal"
+                        : course.currentLesson
+                          ? "border-brand/30 bg-brand/10 text-brand"
+                          : "border-line bg-surface-2 text-muted"
+                    }`}
+                  >
+                    {completed
+                      ? "Completado"
+                      : course.currentLesson
+                        ? "En curso"
+                        : "Curso"}
                   </span>
                 </div>
 
@@ -82,11 +101,52 @@ export function DashboardCourses({ courses }: { courses: DashboardCourse[] }) {
                   <p>{describeCourse(course)}</p>
                 </div>
 
+                {course.currentLesson ? (
+                  <div className="mt-4 rounded-2xl border border-brand/20 bg-brand/5 p-3.5">
+                    <p className="flex items-center gap-2 text-[0.7rem] font-extrabold tracking-[0.04em] text-brand uppercase">
+                      <PlayIcon className="size-3.5 translate-x-0.5" />
+                      Lección en curso
+                    </p>
+                    <p className="mt-1.5 text-[0.92rem] font-bold">
+                      {course.currentLesson.title}
+                    </p>
+                    <p className="mt-0.5 truncate text-[0.78rem] text-muted">
+                      {course.currentLesson.sectionTitle}
+                      {course.currentLesson.order > 0
+                        ? ` · Lección ${course.currentLesson.order}`
+                        : ""}
+                    </p>
+                  </div>
+                ) : completed ? (
+                  <p className="mt-4 flex items-center gap-2 rounded-2xl border border-teal/30 bg-teal/10 p-3.5 text-[0.85rem] font-bold text-teal">
+                    <CheckIcon className="size-4" />
+                    Curso completado
+                  </p>
+                ) : null}
+
+                {course.progress ? (
+                  <div className="mt-4">
+                    <div className="flex items-center justify-between gap-3 text-[0.78rem] font-semibold text-muted">
+                      <span>
+                        {course.progress.completedLessons} de{" "}
+                        {course.progress.totalLessons} lecciones
+                      </span>
+                      <span>{course.progress.percentage}%</span>
+                    </div>
+                    <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-surface-2">
+                      <div
+                        className="h-full rounded-full brand-gradient"
+                        style={{ width: `${course.progress.percentage}%` }}
+                      />
+                    </div>
+                  </div>
+                ) : null}
+
                 <Link
-                  href="#lecciones"
-                  className="mt-4 inline-flex items-center gap-2 self-start text-[0.9rem] font-bold text-brand transition hover:gap-3 max-sm:mt-5 max-sm:w-full max-sm:justify-center max-sm:rounded-full max-sm:border max-sm:border-brand/30 max-sm:bg-brand/5 max-sm:py-3"
+                  href={`/dashboard/courses/${course.documentId}`}
+                  className="mt-4 inline-flex items-center gap-2 self-start text-[0.9rem] font-bold text-brand transition before:absolute before:inset-0 before:content-[''] hover:gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand max-sm:mt-5 max-sm:w-full max-sm:justify-center max-sm:rounded-full max-sm:border max-sm:border-brand/30 max-sm:bg-brand/5 max-sm:py-3"
                 >
-                  Ver lecciones
+                  {course.currentLesson ? "Continuar curso" : "Ver curso"}
                   <ArrowRightIcon className="size-4" />
                 </Link>
               </article>

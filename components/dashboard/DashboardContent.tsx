@@ -125,7 +125,7 @@ export function DashboardContent() {
             </Reveal>
 
             <Reveal>
-              <LessonLibrary lessons={lessons} />
+              <LessonLibrary courses={courses} />
             </Reveal>
           </>
         ) : null}

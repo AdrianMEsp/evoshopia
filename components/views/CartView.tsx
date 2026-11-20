@@ -6,6 +6,7 @@ import Link from "next/link";
 import AuthAlert from "@/components/auth/AuthAlert";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useCart } from "@/components/cart/CartProvider";
+import { RemoveCartItemDialog } from "@/components/cart/RemoveCartItemDialog";
 import { ArrowRightIcon } from "@/components/icons";
 import { Button } from "@/components/ui/Button";
 import { CatalogEmpty } from "@/components/views/CatalogFeedback";
@@ -32,15 +33,23 @@ export function CartView() {
   } = useCart();
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [itemToRemove, setItemToRemove] = useState<{
+    documentId: string;
+    name: string;
+  } | null>(null);
   const canPurchase = canPurchaseCourses(user);
 
-  const handleRemove = async (courseDocumentId: string) => {
+  const handleRemove = async () => {
+    if (!itemToRemove) return;
+
     setFeedback(null);
 
     try {
-      await removeItem(courseDocumentId);
+      await removeItem(itemToRemove.documentId);
     } catch (removeError) {
       setFeedback(getErrorMessage(removeError));
+    } finally {
+      setItemToRemove(null);
     }
   };
 
@@ -178,7 +187,12 @@ export function CartView() {
               </div>
               <button
                 type="button"
-                onClick={() => void handleRemove(item.course.documentId)}
+                onClick={() =>
+                  setItemToRemove({
+                    documentId: item.course.documentId,
+                    name: item.course.name,
+                  })
+                }
                 disabled={isPending(item.course.documentId)}
                 className="self-start rounded-full border border-line px-4 py-2 text-[0.82rem] font-bold text-muted transition hover:cursor-pointer hover:border-red-300 hover:text-red-700 disabled:cursor-wait disabled:opacity-60 sm:self-auto"
               >
@@ -231,6 +245,14 @@ export function CartView() {
           </div>
         ) : null}
       </aside>
+
+      <RemoveCartItemDialog
+        open={itemToRemove !== null}
+        pending={itemToRemove ? isPending(itemToRemove.documentId) : false}
+        courseName={itemToRemove?.name ?? ""}
+        onCancel={() => setItemToRemove(null)}
+        onConfirm={() => void handleRemove()}
+      />
     </div>
   );
 }
