@@ -17,10 +17,8 @@ export default async function CourseDetailPage({
   const { slug } = await params;
 
   return (
-    <RequireAuth>
       <Container className="py-[62px] lg:py-[82px]">
         <CourseDetailView slug={slug} />
       </Container>
-    </RequireAuth>
   );
 }

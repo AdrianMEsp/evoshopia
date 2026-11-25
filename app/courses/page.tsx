@@ -12,7 +12,6 @@ export const metadata: Metadata = {
 
 export default function CoursesPage() {
   return (
-    <RequireAuth>
       <Container className="py-[62px] lg:py-[82px]">
         <SectionHeading
           eyebrow={courses.eyebrow}
@@ -21,6 +20,5 @@ export default function CoursesPage() {
         />
         <CoursesView />
       </Container>
-    </RequireAuth>
   );
 }
