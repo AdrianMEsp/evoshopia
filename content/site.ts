@@ -51,12 +51,12 @@ export interface SolutionItem {
 
 export const site = {
   name: "Evosophia",
-  title: "Evosistencia | Tecnología con Humanidad®",
+  title: "Evosophia | Tecnología con Humanidad®",
   description:
-    "Evosistencia transforma organizaciones fortaleciendo personas mediante inteligencia artificial, bienestar organizacional e innovación.",
+    "Evosophia transforma organizaciones fortaleciendo personas mediante inteligencia artificial, bienestar organizacional e innovación.",
   ogDescription:
     "Consultoría internacional en IA, bienestar, formación y transformación digital.",
-  url: "https://www.evosistencia.cl",
+  url: "https://www.evosophia.cl",
   themeColor: "#5b22e8",
   email: "contacto@evosistencia.cl",
   location: "Santiago, Chile",
@@ -92,8 +92,9 @@ export const navLinks: NavLink[] = [
   { label: "Ecosistema", href: "#ecosistema" },
   { label: "Servicios", href: "#servicios" },
   { label: "Talleres", href: "#programas" },
+  { label: "Cursos", href: "/courses" },
   { label: "Empresas", href: "#nosotros" },
-  { label: "Blog", href: "#blog" },
+  { label: "Blog", href: "/blog" },
   { label: "Contacto", href: "#contacto" },
 ];
 
@@ -334,6 +335,20 @@ export const blog = {
       text: "Innovar sin quemar a los equipos en el intento.",
     },
   ] satisfies PostItem[],
+};
+
+export const courses = {
+  eyebrow: "Cursos",
+  title: "Formación para transformar organizaciones.",
+  description:
+    "Conoce los cursos disponibles, su contenido, duración y valor de inscripción.",
+};
+
+export const cart = {
+  eyebrow: "Carrito",
+  title: "Revisa tus cursos antes de pagar.",
+  description:
+    "Aquí se agrupan los cursos que elegiste. Puedes quitar los que ya no quieras y pagar todos juntos.",
 };
 
 export const cta = {

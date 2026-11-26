@@ -1,20 +1,15 @@
-interface Props
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+import { cn } from "@/lib/cn";
 
-export default function AuthInput(props: Props) {
+type Props = React.InputHTMLAttributes<HTMLInputElement>;
+
+export default function AuthInput({ className, ...props }: Props) {
   return (
     <input
       {...props}
-      className="
-        w-full
-        border
-        rounded-lg
-        px-4
-        py-3
-        outline-none
-        focus:ring-2
-        focus:ring-violet-500
-      "
+      className={cn(
+        "w-full rounded-xl border border-line bg-surface px-4 py-3 text-ink outline-none transition placeholder:text-muted/70 focus:border-brand/60 focus:ring-2 focus:ring-brand/20 disabled:cursor-not-allowed disabled:opacity-60",
+        className,
+      )}
     />
   );
 }

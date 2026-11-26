@@ -1,30 +1,34 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+import AuthCard from "@/components/auth/AuthCard";
+import AuthLayout from "@/components/auth/AuthLayout";
 
 export default function PasswordUpdatedPage() {
-  const router = useRouter();
-
   return (
-    <main className="min-h-screen flex items-center justify-center">
-      <div className="max-w-md w-full text-center">
+    <AuthLayout>
+      <AuthCard>
+        <div className="text-center">
+          <span className="mx-auto mb-5 grid size-14 place-items-center rounded-full bg-emerald-50 text-2xl text-emerald-600">
+            ✓
+          </span>
 
-        <h1 className="text-3xl font-bold mb-4">
-          Contraseña actualizada
-        </h1>
+          <h1 className="mb-3 text-3xl font-bold">Contraseña actualizada</h1>
 
-        <p className="mb-8">
-          Tu contraseña se actualizó correctamente.
-        </p>
+          <p className="mb-8 text-sm text-muted">
+            Tu contraseña se actualizó correctamente. Ya puedes iniciar sesión
+            con tus nuevas credenciales.
+          </p>
 
-        <button
-          onClick={() => router.push("/login")}
-          className="w-full rounded-full bg-purple-600 text-white py-3"
-        >
-          Volver al login
-        </button>
-
-      </div>
-    </main>
+          <Link
+            href="/login?reset=1"
+            className="brand-gradient block w-full rounded-xl px-5 py-3 text-center font-semibold text-white"
+          >
+            Volver al inicio de sesión
+          </Link>
+        </div>
+      </AuthCard>
+    </AuthLayout>
   );
 }
