@@ -250,9 +250,7 @@ export function BlogView() {
 
           return (
             <Reveal key={post.id} delay={index * 70} className="h-full">
-              <article className="relative flex h-full flex-col overflow-hidden rounded-[22px] 
-              border border-line bg-surface shadow-[var(--shadow-soft)] transition duration-200 
-              hover:-translate-y-1.5 hover:border-brand/60 hover:shadow-[var(--shadow)]">
+              <article className="relative flex h-full flex-col overflow-hidden rounded-[22px] border border-line bg-surface shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1.5 hover:border-brand/60 hover:shadow-[var(--shadow)]">
                 <button
                   type="button"
                   onClick={() => setSelectedPost(post)}

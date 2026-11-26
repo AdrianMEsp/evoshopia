@@ -14,7 +14,6 @@ import { navLinks } from "@/content/site";
 import { canPurchaseCourses, getUserDisplayName } from "@/lib/auth";
 import { cn } from "@/lib/cn";
 import Logo from "@/public/images/brand/evosistencia.png";
-
 export function Header() {
   const [open, setOpen] = useState(false);
   const [activeHref, setActiveHref] = useState<string | null>(null);
@@ -157,11 +156,7 @@ export function Header() {
               <button
                 type="button"
                 onClick={requestSignOut}
-                className="inline-flex h-[46px] items-center 
-                justify-center rounded-full border border-line bg-surface 
-                px-[18px] text-sm font-bold text-muted shadow-[var(--shadow-soft)] hover:cursor-pointer
-                transition duration-200 hover:-translate-y-0.5 hover:border-red-600
-                  text-red-700"
+                className="inline-flex h-[46px] items-center justify-center rounded-full border border-line bg-surface px-[18px] text-sm font-bold text-red-700 text-muted shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-0.5 hover:cursor-pointer hover:border-red-600"
               >
                 Salir
               </button>
