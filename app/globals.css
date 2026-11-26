@@ -57,7 +57,61 @@
   );
 }
 
+@keyframes section-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+.motion-float {
+  animation: section-float 5.5s ease-in-out infinite;
+}
+
+.motion-float-slow {
+  animation: section-float 7s ease-in-out -2.5s infinite;
+}
+
+@supports (animation-timeline: view()) {
+  .services-scroll-drift {
+    animation: services-scroll-drift linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+
+  @keyframes services-scroll-drift {
+    from {
+      translate: 0 -18px;
+    }
+    to {
+      translate: 0 18px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-float,
+  .motion-float-slow,
+  .services-scroll-drift {
+    animation: none;
+    translate: none;
+  }
+}
+
 @layer base {
+  button:not(:disabled),
+  a[href],
+  [role="button"] {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
   html {
     /* scroll-behavior: smooth; */
     scroll-padding-top: 96px;

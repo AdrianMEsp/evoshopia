@@ -11,7 +11,7 @@ export default function ForgotPassword() {
         <div className="w-full max-w-[452px]">
           <div className="flex flex-col items-center text-center">
             <span className="mb-4 inline-flex items-center justify-center rounded-full border border-line bg-surface px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.28em] text-muted">
-              TU ESPACIO EVOSISTENCIA
+              TU ESPACIO EVOSOHOPIA
             </span>
             <h1 className="text-[32px] font-bold leading-tight text-ink">
               Ingresá el código de verificación.

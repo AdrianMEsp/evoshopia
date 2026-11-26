@@ -37,6 +37,7 @@ export interface ReasonItem {
 }
 
 export interface PostItem {
+  icon: IconName;
   title: string;
   text: string;
 }
@@ -49,7 +50,7 @@ export interface SolutionItem {
 }
 
 export const site = {
-  name: "Evosistencia",
+  name: "Evosophia",
   title: "Evosistencia | Tecnología con Humanidad®",
   description:
     "Evosistencia transforma organizaciones fortaleciendo personas mediante inteligencia artificial, bienestar organizacional e innovación.",
@@ -142,10 +143,10 @@ export const ecosystem = {
     "Una arquitectura de impacto donde consultoría, fundación, tecnología educativa e innovación trabajan de forma integrada.",
   items: [
     {
-      name: "Evosistencia",
+      name: "Evosophia",
       text: "Consultoría estratégica que integra tecnología, bienestar y formación para transformar culturas organizacionales.",
       logo: "/images/brand/evosistencia.png",
-      alt: "Evosistencia",
+      alt: "Logo de Evosophia",
     },
     {
       name: "Fundación Vive Tu Mente",
@@ -249,7 +250,7 @@ export const programs = {
 };
 
 export const reasons = {
-  eyebrow: "Por qué Evosistencia",
+  eyebrow: "Por qué Evosophia",
   title: "Una consultora construida desde disciplinas complementarias.",
   items: [
     {
@@ -284,11 +285,20 @@ export const about = {
   eyebrow: "Nosotros",
   title: "Tecnología con propósito humano.",
   description:
-    "Evosistencia nace para cerrar la brecha entre el avance tecnológico y la estabilidad emocional de las personas. Combinamos experiencia en tecnología, psicología, educación y emprendimiento para crear programas y soluciones que fortalecen organizaciones desde dentro.",
+    "Evosophia nace para cerrar la brecha entre el avance tecnológico y la estabilidad emocional de las personas. Combinamos experiencia en tecnología, psicología, educación y emprendimiento para crear programas y soluciones que fortalecen organizaciones desde dentro.",
   bullets: [
-    "Diseño de programas para empresas e instituciones educativas.",
-    "IA aplicada a bienestar, formación y transformación digital.",
-    "Charlas y talleres con enfoque práctico, ético y medible.",
+    {
+      title: "Diseño de programas",
+      text: "para empresas e instituciones educativas.",
+    },
+    {
+      title: "IA aplicada al bienestar",
+      text: "formación y transformación digital.",
+    },
+    {
+      title: "Charlas y talleres",
+      text: "con enfoque práctico, ético y medible.",
+    },
   ],
   cta: { label: "Conocer trayectoria", href: "#casos" },
 };
@@ -297,24 +307,29 @@ export const successCases = {
   eyebrow: "Casos de éxito",
   title: "Espacio preparado para evidencia, pilotos y resultados.",
   description:
-    "Esta sección queda diseñada para incorporar casos verificables, indicadores de impacto, testimonios autorizados y aprendizajes de implementación.",
+    "Este espacio cuenta con recursos para acompañar cada etapa: verificación, indicadores de impacto, testimonios institucionales y aprendizajes de implementación.",
   highlight: "Próximamente:",
-  text: "pilotos, alianzas formales y resultados documentados del ecosistema Evosistencia.",
+  text: "datos, alianzas estratégicas y una base sistematizada del ecosistema Evosophia.",
 };
 
 export const blog = {
   eyebrow: "Blog",
   title: "Ideas para organizaciones más humanas e inteligentes.",
+  description:
+    "Explorá artículos, casos y perspectivas sobre tecnología, bienestar y transformación para el desarrollo de organizaciones más conscientes.",
   posts: [
     {
+      icon: "ai",
       title: "IA responsable en educación",
       text: "Cómo integrar tecnología sin perder criterio humano.",
     },
     {
+      icon: "heart",
       title: "Bienestar organizacional medible",
       text: "Del discurso a programas con seguimiento real.",
     },
     {
+      icon: "trending-up",
       title: "Transformación digital consciente",
       text: "Innovar sin quemar a los equipos en el intento.",
     },
@@ -323,7 +338,7 @@ export const blog = {
 
 export const cta = {
   title: "Agenda una reunión estratégica.",
-  text: "Conversemos cómo Evosistencia puede ayudar a tu organización a integrar tecnología, bienestar e innovación.",
+  text: "Conversemos cómo Evosophia puede ayudar a tu organización a integrar tecnología, bienestar e innovación.",
   button: {
     label: "Agendar reunión",
     href: "mailto:contacto@evosistencia.cl?subject=Agendar%20reuni%C3%B3n%20estrat%C3%A9gica",
@@ -340,6 +355,7 @@ export const footer = {
         { label: "Servicios", href: "#servicios" },
         { label: "Ecosistema", href: "#ecosistema" },
         { label: "Empresas", href: "#nosotros" },
+        { label: "Blog", href: "#blog" },
       ],
     },
     {
@@ -348,6 +364,7 @@ export const footer = {
         { label: "Tu Factor Invisible", href: "#programas" },
         { label: "Negociación Estratégica", href: "#programas" },
         { label: "IA Responsable", href: "#programas" },
+        { label: "Formación y Talleres", href: "#programas" },
       ],
     },
     {
@@ -360,5 +377,5 @@ export const footer = {
     },
   ],
   legal: "Privacidad · Términos · Accesibilidad",
-  copyright: "© 2026 Evosistencia. Todos los derechos reservados.",
+  copyright: "© 2026 Evosophia. Todos los derechos reservados.",
 };
