@@ -4,11 +4,11 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { DeleteAccountDialog } from "@/components/account/DeleteAccountDialog";
 import AuthAlert from "@/components/auth/AuthAlert";
 import AuthButton from "@/components/auth/AuthButton";
 import AuthInput from "@/components/auth/AuthInput";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { SignOutDialog } from "@/components/auth/SignOutDialog";
 import { getErrorMessage, resolveMediaUrl } from "@/lib/api";
 import {
   getUserDisplayName,
@@ -29,7 +29,7 @@ export function AccountView() {
     changePassword,
     uploadAvatar,
     removeAvatar,
-    signOut,
+    deleteAccount,
   } = useAuth();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -50,8 +50,12 @@ export function AccountView() {
   const [passwordPending, setPasswordPending] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordMessage, setPasswordMessage] = useState<string | null>(null);
-  const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
-  const [signOutPending, setSignOutPending] = useState(false);
+  const [deleteAccountDialogOpen, setDeleteAccountDialogOpen] = useState(false);
+  const [deleteAccountPassword, setDeleteAccountPassword] = useState("");
+  const [deleteAccountPending, setDeleteAccountPending] = useState(false);
+  const [deleteAccountError, setDeleteAccountError] = useState<string | null>(
+    null,
+  );
 
   const displayName = getUserDisplayName(user);
   const initials = getUserInitials(user);
@@ -179,15 +183,39 @@ export function AccountView() {
     }
   };
 
-  const handleSignOut = async () => {
-    setSignOutPending(true);
+  const openDeleteAccountDialog = () => {
+    setDeleteAccountPassword("");
+    setDeleteAccountError(null);
+    setDeleteAccountDialogOpen(true);
+  };
+
+  const closeDeleteAccountDialog = () => {
+    if (deleteAccountPending) return;
+
+    setDeleteAccountDialogOpen(false);
+    setDeleteAccountPassword("");
+    setDeleteAccountError(null);
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!deleteAccountPassword) {
+      setDeleteAccountError("Ingresa tu contraseña actual.");
+      return;
+    }
+
+    setDeleteAccountPending(true);
+    setDeleteAccountError(null);
+
     try {
-      await signOut();
-      setSignOutDialogOpen(false);
+      await deleteAccount(deleteAccountPassword);
+      setDeleteAccountDialogOpen(false);
+      setDeleteAccountPassword("");
       router.replace("/login");
       router.refresh();
+    } catch (error) {
+      setDeleteAccountError(getErrorMessage(error));
     } finally {
-      setSignOutPending(false);
+      setDeleteAccountPending(false);
     }
   };
 
@@ -398,26 +426,32 @@ export function AccountView() {
           </section>
 
           <section className={cardClassName}>
-            <h2 className="text-lg font-bold">Sesión</h2>
+            <h2 className="text-lg font-bold">Borrar cuenta</h2>
             <p className="mt-1 text-sm text-muted">
-              Cierra tu sesión en este dispositivo cuando termines.
+              Tu cuenta quedará desactivada y no podrás volver a iniciar sesión.
             </p>
 
             <button
               type="button"
-              onClick={() => setSignOutDialogOpen(true)}
+              onClick={openDeleteAccountDialog}
               className="mt-5 inline-flex w-full items-center justify-center rounded-xl border border-red-200 bg-red-50 px-5 py-3 text-sm font-bold text-red-600 transition hover:cursor-pointer hover:bg-red-100"
             >
-              Cerrar sesión
+              Borrar cuenta
             </button>
           </section>
         </div>
       </div>
-      <SignOutDialog
-        open={signOutDialogOpen}
-        pending={signOutPending}
-        onCancel={() => setSignOutDialogOpen(false)}
-        onConfirm={() => void handleSignOut()}
+      <DeleteAccountDialog
+        open={deleteAccountDialogOpen}
+        pending={deleteAccountPending}
+        password={deleteAccountPassword}
+        error={deleteAccountError}
+        onPasswordChange={(password) => {
+          setDeleteAccountPassword(password);
+          setDeleteAccountError(null);
+        }}
+        onCancel={closeDeleteAccountDialog}
+        onConfirm={() => void handleDeleteAccount()}
       />
     </div>
   );

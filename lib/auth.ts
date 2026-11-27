@@ -249,6 +249,13 @@ export async function changePassword(
   }
 }
 
+export async function deactivateAccount(password: string): Promise<void> {
+  await apiFetch("/users/me/deactivate", {
+    method: "POST",
+    body: { password },
+  });
+}
+
 export async function updateProfile(input: {
   name: string;
   lastname: string;
