@@ -17,6 +17,7 @@ import {
 } from "@/lib/api";
 import {
   changePassword as changePasswordRequest,
+  deactivateAccount as deactivateAccountRequest,
   deleteProfileImage,
   getCurrentUser,
   getUserDisplayName,
@@ -38,6 +39,7 @@ interface AuthContextValue {
   signIn: (identifier: string, password: string) => Promise<AuthUser>;
   signUp: (input: RegisterInput) => Promise<RegisterResult>;
   signOut: () => Promise<void>;
+  deleteAccount: (password: string) => Promise<void>;
   refreshUser: () => Promise<AuthUser | null>;
   saveProfile: (input: {
     name: string;
@@ -167,6 +169,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const deleteAccount = useCallback(async (password: string) => {
+    await deactivateAccountRequest(password);
+    clearStoredToken();
+    setUser(null);
+    setStatus("unauthenticated");
+  }, []);
+
   const refreshUser = useCallback(async () => {
     if (!getStoredToken()) {
       setUser(null);
@@ -235,6 +244,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signIn,
       signUp,
       signOut,
+      deleteAccount,
       refreshUser,
       saveProfile,
       changePassword,
@@ -247,6 +257,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signIn,
       signUp,
       signOut,
+      deleteAccount,
       refreshUser,
       saveProfile,
       changePassword,
